@@ -35,16 +35,17 @@ git clone https://github.com/RobotnikAutomation/phantomx_reactor_arm.git
 ## Lidar
 Im Ordner “src” des Workspace dieses Repository downloaden bzw. folgenden Instructionen folgen:
 ```
-→ git clone https://github.com/ros-drivers/driver_common.git
-→ cd ..
-→ catkin_make
-→ cd src
-→ git clone https://github.com/ros-drivers/hokuyo_node.git
-→ cd ..
-→ catkin_make
+git clone https://github.com/ros-drivers/driver_common.git
+cd ..
+catkin_make
+cd src
+git clone https://github.com/ros-drivers/hokuyo_node.git
+cd ..
+catkin_make
+```
 
 Troubleshooting: Es ist wichtig driver_common VORHER zu kompilieren, 
-bevor hokuyo_node hinzugefügt wird. Sonst scheitert der Prozess.
+bevor hokuyo_node hinzugefügt wird. Sonst scheitert der Prozess!
 ```
 ## Package
 Vor der erstmaligen ausführen von Programmen muss das Botty-Package kompiliert werden. Folgenden Befehl im catkin_ws Ordner ausführen:
@@ -80,9 +81,9 @@ rosrun botty pose_command.py
 ## Lidar
 In einem Terminal folgende Instructionen folgen:
 ```
-→ sudo chmod a+rw /dev/ttyACM0
-→ rosrun hokuyo_node hokuyo_node
-→ rosrun hokuyoInterpreter hokuyoInterpreter.py
+sudo chmod a+rw /dev/ttyACM0
+rosrun hokuyo_node hokuyo_node
+rosrun hokuyoInterpreter hokuyoInterpreter.py
 ```
 
 # Sonstiges
