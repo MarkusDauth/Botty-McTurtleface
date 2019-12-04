@@ -24,14 +24,14 @@ pose_target = geometry_msgs.msg.Pose()
 
 #Eine bereits vorhandene Pose soll eingenommen werden
 #Pose wird mit dem Setup_Assistant erstellt
-group.set_named_target("start")
-#group.set_named_target("home")
 
-plan1 = group.plan()
+group.set_named_target("home")
+
+plan = group.plan()
 
 rospy.sleep(1)
 
-group.go(wait=True)
+group.go()
 
 
 #Vorsichtshalber nochmal stoppen, falls doch noch eine Bewegung ausgefuehrt wird
