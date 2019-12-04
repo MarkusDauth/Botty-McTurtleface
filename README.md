@@ -49,7 +49,7 @@ bevor hokuyo_node hinzugefügt wird. Sonst scheitert der Prozess!
 
 ## Orbbec Astra Camera
 
-# Dependencies installieren:
+### Dependencies installieren:
 ```
 sudo apt-get install ros-kinetic-find-object-2d
 sudo apt install ros-kinetic-rgbd-launch ros-kinetic-libuvc ros-kinetic-libuvc-camera ros-kinetic-libuvc-ros
@@ -104,7 +104,7 @@ rosrun hokuyo_node hokuyo_node
 rosrun hokuyoInterpreter hokuyoInterpreter.py
 ```
 
-Kamera-Demo starten
+## Kamera-Demo starten
 ```
 roslaunch camera camera.launch
 ```
