@@ -104,9 +104,16 @@ rosrun hokuyo_node hokuyo_node
 rosrun hokuyoInterpreter hokuyoInterpreter.py
 ```
 
-## Kamera-Demo starten
+## Kamera
+Auf eigenem Rechner starten:
+
 ```
 roslaunch camera camera.launch
+```
+Auf dem Turtlebot-Rechner starten:
+
+```
+roslaunch astra_launch astra.launch
 ```
 
 # Sonstiges
