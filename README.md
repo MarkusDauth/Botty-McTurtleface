@@ -6,11 +6,16 @@ Dieses ROS-Package dient zur Steuerung des Turtlebot2 mit folgenden Komponenten:
 - Orbbec Astra (RD-Kamera)
 - NUC
 
-Das Botty-Package ist nochmal in mehrere Packages aufgeteilt. Das Controll-Package
+Das Botty-Package ist nochmal in mehrere Subpackages aufgeteilt.
+- arm
+- camera
+- lidar
+- speech_parser
+- controller
 
 # Installation
 
-Dieses Repository dient als eigenes ROS-Package und muss daher in den src Ordner des Catkin_Workspaces geklont werden.
+Dieses Repository dient als eigenes ROS-Package und muss daher in den src Ordner des Catkin_Workspaces geklont werden. Es müssen mehrere Programme über apt-get installiert werden und Git-Repositories in den src Ordner des 
 
 Vor der Installation sollte das ausgeführt werden:
 ```
@@ -46,24 +51,6 @@ catkin_make
 
 Troubleshooting: Es ist wichtig driver_common VORHER zu kompilieren, 
 bevor hokuyo_node hinzugefügt wird. Sonst scheitert der Prozess!
-
-## Orbbec Astra Camera
-
-### Dependencies installieren:
-```
-sudo apt-get install ros-kinetic-find-object-2d
-sudo apt install ros-kinetic-rgbd-launch ros-kinetic-libuvc ros-kinetic-libuvc-camera ros-kinetic-libuvc-ros
-sudo apt-get install ros-kinetic-robot-localization
-cd ~/catkin_ws/src
-git clone https://github.com/orbbec/ros_astra_camera
-```
-Rosbot_ekf installieren:
-
-```
-cd ~/catkin_ws
-git clone https://github.com/husarion/rosbot_ekf.git
-catkin_make
-```
 
 ## Package
 Vor der erstmaligen ausführen von Programmen muss das Botty-Package kompiliert werden. Folgenden Befehl im catkin_ws Ordner ausführen:
@@ -102,18 +89,6 @@ In einem Terminal folgende Instruktionen folgen:
 sudo chmod a+rw /dev/ttyACM0
 rosrun hokuyo_node hokuyo_node
 rosrun hokuyoInterpreter hokuyoInterpreter.py
-```
-
-## Kamera
-Auf eigenem Rechner starten:
-
-```
-roslaunch camera camera.launch
-```
-Auf dem Turtlebot-Rechner starten:
-
-```
-roslaunch astra_launch astra.launch
 ```
 
 # Sonstiges
