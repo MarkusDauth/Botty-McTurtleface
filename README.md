@@ -33,7 +33,7 @@ git clone https://github.com/RobotnikAutomation/phantomx_reactor_arm.git
 ```
 
 ## Lidar
-Im Ordner “src” des Workspace dieses Repository downloaden bzw. folgenden Instructionen folgen:
+Im Ordner “src” des Workspace dieses Repository downloaden bzw. folgenden Instruktionen folgen:
 ```
 git clone https://github.com/ros-drivers/driver_common.git
 cd ..
@@ -79,7 +79,7 @@ rosrun botty pose_command.py
 ```
 
 ## Lidar
-In einem Terminal folgende Instructionen folgen:
+In einem Terminal folgende Instruktionen folgen:
 ```
 sudo chmod a+rw /dev/ttyACM0
 rosrun hokuyo_node hokuyo_node
