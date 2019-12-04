@@ -88,7 +88,7 @@ In einem Terminal folgende Instruktionen folgen:
 ```
 sudo chmod a+rw /dev/ttyACM0
 rosrun hokuyo_node hokuyo_node
-rosrun hokuyoInterpreter hokuyoInterpreter.py
+rosrun lidar hokuyoInterpreter.py
 ```
 
 # Sonstiges
