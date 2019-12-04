@@ -52,6 +52,35 @@ catkin_make
 Troubleshooting: Es ist wichtig driver_common VORHER zu kompilieren, 
 bevor hokuyo_node hinzugefügt wird. Sonst scheitert der Prozess!
 
+## speech_parser
+Falls 'pip' nicht installiert ist:
+```
+sudo apt install python-pip
+sudo apt install python3-pip
+pip install --upgrade pip
+```
+
+Dependencies installieren:
+```
+sudo apt-get install libasound-dev
+sudo apt-get install python-pyaudio
+Sudo apt-get install swig
+```
+
+Pocketsphinx installieren:
+```
+sudo pip install pocketsphinx
+```
+
+Im Ordner “src” des Workspace dieses Repository downloaden und kompilieren:
+```
+git clone https://github.com/david-kostka/cmu_pocketsphinx
+catkin_make
+```
+
+## controller
+Bis jetzt keine Dependencies
+
 ## Package
 Vor der erstmaligen ausführen von Programmen muss das Botty-Package kompiliert werden. Folgenden Befehl im catkin_ws Ordner ausführen:
 ```
@@ -90,6 +119,25 @@ sudo chmod a+rw /dev/ttyACM0
 rosrun hokuyo_node hokuyo_node
 rosrun lidar hokuyoInterpreter.py
 ```
+
+## speech_parser
+Recognizer/Parser starten:
+```
+roslaunch parser parser.launch
+```
+
+## controller
+Arm-steuerung per Sprachkommandos:
+```
+roslaunch control arm_control.launch
+```
+
+Navigation per Sprachkommandos:
+```
+roslaunch control base_control.launch
+```
+
+Der speech_parser wird beim launch automatisch gestartet, muss also nicht davor gestartet werden.
 
 # Sonstiges
 
