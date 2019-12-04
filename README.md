@@ -54,7 +54,6 @@ bevor hokuyo_node hinzugefügt wird. Sonst scheitert der Prozess!
 sudo apt-get install ros-kinetic-find-object-2d
 sudo apt install ros-kinetic-rgbd-launch ros-kinetic-libuvc ros-kinetic-libuvc-camera ros-kinetic-libuvc-ros
 sudo apt-get install ros-kinetic-robot-localization
-sudo apt-get install ros-kinetic-robot-localization
 cd ~/catkin_ws/src
 git clone https://github.com/orbbec/ros_astra_camera
 ```
