@@ -1,0 +1,41 @@
+<launch>
+    
+    <!--
+    Args with no default attribute are not optional
+    -->
+    <arg name="input" default=":default"/>
+    <arg name="hmm" default=":default" />
+    <arg name="dict" />
+    <arg name="kws" default=":default"/>
+    <arg name="keyphrase" default=":default"/>
+    <arg name="threshold" default=":default"/>
+
+    <!--
+    Node for publishing audio inputs
+    -->
+    <node
+        name="audio_control"
+        pkg="pocketsphinx"
+        type="send_audio.py"
+        output="screen"
+        >
+        <param name="input" value="$(arg input)"/>
+    </node>
+
+    <!--
+    Node for handling kws mode
+    -->
+    <node
+        name="kws_control"
+        pkg="pocketsphinx"
+        type="kws_test.py"
+        output="screen"
+        >
+        <param name="hmm" value="$(find parser)/config/cmusphinx-en-us-5.2"/>
+        <param name="dict" value="$(find parser)/config/voice_cmd.dic"/>
+        <param name="kws" value="$(find parser)/config/voice_cmd.kwlist"/>
+        <param name="keyphrase" value="$(arg keyphrase)"/>
+        <param name="threshold" value="$(arg threshold)"/>
+
+    </node>
+</launch>

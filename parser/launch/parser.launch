@@ -1,0 +1,17 @@
+<launch>
+    <!--
+    Starting speech recognizer
+    -->
+    <include file="$(find parser)/launch/keyword_recognition.launch"></include>
+
+    <!--
+    Node for parsing of speech data
+    -->
+    <node
+        name="parser"
+        pkg="parser"
+        type="parser.py"
+        output="screen"
+        >
+    </node>
+</launch>

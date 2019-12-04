@@ -1,0 +1,17 @@
+<launch>
+    <!--
+    Starting speech recognizer
+    -->
+    <include file="$(find parser)/launch/parser.launch"></include>
+
+    <!--
+    Node for handling base commands
+    -->
+    <node
+        name="base_control"
+        pkg="control"
+        type="base_control.py"
+        output="screen"
+        >
+    </node>
+</launch>

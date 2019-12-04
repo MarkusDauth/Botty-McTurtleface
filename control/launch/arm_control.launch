@@ -1,0 +1,17 @@
+<launch>
+    <!--
+    Starting speech recognizer
+    -->
+    <include file="$(find parser)/launch/parser.launch"></include>
+
+    <!--
+    Node for handling arm commands
+    -->
+    <node
+        name="arm_control"
+        pkg="control"
+        type="arm_control.py"
+        output="screen"
+        >
+    </node>
+</launch>
