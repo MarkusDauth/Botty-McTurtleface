@@ -85,6 +85,7 @@ In einem Terminal folgende Instructionen folgen:
 → rosrun hokuyoInterpreter hokuyoInterpreter.py
 ```
 
-##Sonstiges
+# Sonstiges
+
 Teammitglieder:
 Markus Dauth, Felix Mayer, David Kostka, Raschied Slet
