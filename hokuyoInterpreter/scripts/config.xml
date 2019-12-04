@@ -9,7 +9,7 @@
         <angle start="30" end="210" site="45">front</angle>
     </angles>
     <!-- if a hint is bellow this range while using the front angle, this node is sending a massege to stop the motors-->
-    <collision range="10"/> <!-- wird von 'site' der Winkeln dynamisch verringert-->
+    <collision range="15"/> <!-- wird von 'site' der Winkeln dynamisch verringert-->
     <callibration range="0.25"/> <!-- Abstand der bei der Kallibirierung als 'toter Winkel' betrachtet wird -->
     <constantSecureRange range="2"/> <!-- Sicherheitsabstand der im gegensatz zu 'collision' nicht von 'site' beeinflusst wird-->
 </configs>
