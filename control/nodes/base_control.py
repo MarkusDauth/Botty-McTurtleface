@@ -44,10 +44,10 @@ class ASRControl(object):
             self.msg.angular.z = 0
         elif detected_words.data.find("left") > -1:
             self.msg.linear.x = self.speed
-            self.msg.angular.z = 0.5
+            self.msg.angular.z = 1
         elif detected_words.data.find("right") > -1:
             self.msg.linear.x = self.speed
-            self.msg.angular.z = -0.5
+            self.msg.angular.z = -1
         elif detected_words.data.find("back") > -1:
             self.msg.linear.x = -self.speed
             self.msg.angular.z = 0
@@ -55,8 +55,9 @@ class ASRControl(object):
             self.msg = Twist()
 
         # Publish required message
-	self.pub_.publish(self.msg)
-	self.r.sleep()
+	for x in range(0,10):	
+		self.pub_.publish(self.msg)
+		self.r.sleep()
 
     def shutdown(self):
         """
