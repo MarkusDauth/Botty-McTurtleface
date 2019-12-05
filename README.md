@@ -139,6 +139,18 @@ roslaunch control base_control.launch
 
 Der speech_parser wird beim launch automatisch gestartet, muss also nicht davor gestartet werden.
 
+## Kamera
+Auf eigenem Rechner starten:
+
+```
+roslaunch camera camera.launch
+```
+Auf dem Turtlebot-Rechner starten:
+
+```
+roslaunch astra_launch astra.launch
+```
+
 # Sonstiges
 
 Teammitglieder:
