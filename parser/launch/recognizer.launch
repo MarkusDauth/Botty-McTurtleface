@@ -1,0 +1,45 @@
+<launch>
+
+    <arg name="input" default=":default"/>
+    <arg name="dict" default ="$(find parser)/config/cmudict.dic"/>
+    <arg name="lm" default=":default" />
+    <arg name="kws" default="$(find parser)/config/botty.kwlist"/>
+    <arg name="keyphrase" default=":default"/>
+    <arg name="threshold" default=":default"/>
+    <arg name="hmm" default="$(find parser)/config/cmusphinx-en-us-5.2"/>
+    <arg name="gram" default="$(find parser)/config/botty"/>
+    <arg name="grammar" default="commands"/>
+    <arg name="rule" default="command"/>
+
+    <!--
+    Node for publishing audio inputs
+    -->
+    <node
+        name="audio_control"
+        pkg="parser"
+        type="send_audio.py"
+        output="screen"
+        >
+        <param name="input" value="$(arg input)"/>
+    </node>
+
+    <!--
+    Node for recognition
+    -->
+    <node
+        name="recognizer"
+        pkg="parser"
+        type="recognizer.py"
+        output="screen"
+        >
+        <param name="hmm" value="$(arg hmm)"/>
+        <param name="dict" value="$(arg dict)"/>
+        <param name="kws" value="$(arg kws)"/>
+
+	<param name="lm" value="$(arg lm)"/>
+        <param name="gram" value="$(arg gram)"/>
+        <param name="grammar" value="$(arg grammar)"/>
+        <param name="rule" value="$(arg rule)"/>
+
+    </node>
+</launch>

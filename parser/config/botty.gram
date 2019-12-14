@@ -1,0 +1,30 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for Botty
+ * David Kostka
+ * 13.12.2019
+ */
+
+grammar commands;
+
+/*
+ * Beispiele: 
+ * go to the kitchen
+ * bring the red ball
+ * grab a white cup
+ */
+
+
+public <command> = <action> (<object> | <position>);
+<object> = [THE | A] [<attr>] (BALL | CUP | OBJECT);
+<position> = [<pp>] ([THE] <place>);
+
+//<keyword> = (STOP | GOODBYE | WAIT | CONTINUE);
+<action> = (GO | GRAB | BRING);
+<attr> = (BLUE | RED | GREEN | WHITE | BLACK);
+<pp> = (FROM | TO | AT | IN);
+<nr> = (ONE | TWO | THREE | FOUR | FIVE | SIX | SEVEN | EIGHT | NINE | TEN);
+<place> = (KITCHEN | LIVING ROOM | BEDROOM | GARAGE);
+
+

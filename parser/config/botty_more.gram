@@ -1,0 +1,29 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for Turtle example
+ * david kostka
+ * 
+ */
+
+grammar commands;
+
+/*
+ * Beispiele: 
+ * go to the kitchen
+ * bring the ball to position three
+ */
+
+public <command> = <action> (<object> | <position>) [<position>];
+<action> = (STOP | GO | GRAB | BRING);
+
+<object> = [THE | A] (<obj_list> | IT );
+<position> = [<pp>] ((POSITION <nr>) | ([THE] <pos_list>));
+
+<nr> = (ONE | TWO | THREE | FOUR | FIVE | SIX | SEVEN | EIGHT | NINE | TEN);
+<pp> = (FROM | TO | AT | IN);
+
+<attr> = [<color_list>];
+<obj_list> = [<attr>] (BALL | CUP | OBJECT);
+<pos_list> = KITCHEN | LIVING ROOM | BEDROOM | GARAGE;
+<color_list> = BLUE | RED | GREEN | WHITE | BLACK;
