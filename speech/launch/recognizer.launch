@@ -1,13 +1,13 @@
 <launch>
 
     <arg name="input" default=":default"/>
-    <arg name="dict" default ="$(find parser)/config/cmudict.dic"/>
+    <arg name="dict" default ="$(find speech)/config/cmudict.dic"/>
     <arg name="lm" default=":default" />
-    <arg name="kws" default="$(find parser)/config/botty.kwlist"/>
+    <arg name="kws" default="$(find speech)/config/botty.kwlist"/>
     <arg name="keyphrase" default=":default"/>
     <arg name="threshold" default=":default"/>
-    <arg name="hmm" default="$(find parser)/config/cmusphinx-en-us-5.2"/>
-    <arg name="gram" default="$(find parser)/config/botty"/>
+    <arg name="hmm" default="$(find speech)/config/cmusphinx-en-us-5.2"/>
+    <arg name="gram" default="$(find speech)/config/botty"/>
     <arg name="grammar" default="commands"/>
     <arg name="rule" default="command"/>
 
@@ -16,7 +16,7 @@
     -->
     <node
         name="audio_control"
-        pkg="parser"
+        pkg="speech"
         type="send_audio.py"
         output="screen"
         >
@@ -28,7 +28,7 @@
     -->
     <node
         name="recognizer"
-        pkg="parser"
+        pkg="speech"
         type="recognizer.py"
         output="screen"
         >

@@ -1,5 +1,19 @@
 #!/usr/bin/python
 
+''' 
+Author: David Kostka
+Datum: 13.12.19
+
+Description:
+Speech Recognizer for Botty
+Listens for a Keyword in .kwlist and after that, switches to Grammar mode for command recognition.
+If a command has been recognized, it switches back to kw mode to listen for a wake up call again.
+The command then gets send to the semantic parser for further interpretation.
+
+This implementation uses a lot of modified Code from:
+https://github.com/Pankaj-Baranwal/pocketsphinx
+'''
+
 import os
 
 import rospy
@@ -14,7 +28,7 @@ class Recognizer(object):
     def __init__(self):
 
         # Initializing publisher with buffer size of 10 messages
-        self.pub_ = rospy.Publisher("grammar_data", String, queue_size=10)
+        self.pub_ = rospy.Publisher("/botty/speech/grammar_data", String, queue_size=10)
         
         # initialize node
         rospy.init_node("recognizer")

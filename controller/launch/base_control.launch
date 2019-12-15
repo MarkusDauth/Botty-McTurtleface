@@ -1,15 +1,15 @@
 <launch>
     <!--
-    Starting speech recognizer
+    Starting speech module
     -->
-    <include file="$(find parser)/launch/parser.launch"></include>
+    <include file="$(find speech)/launch/parser.launch"></include>
 
     <!--
     Node for handling base commands
     -->
     <node
         name="base_control"
-        pkg="control"
+        pkg="controller"
         type="base_control.py"
         output="screen"
         >

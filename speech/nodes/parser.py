@@ -4,15 +4,16 @@
 ''' 
 Author: David Kostka
 Datum: 13.12.19
+
 Description:
-Parses/Interprets speech data from recognizer '/grammar_data'
-and sends list of Actions to '/botty/parser/commands'
+Parses/Interprets speech data from recognizer 'botty/speech/grammar_data'
+and sends list of Actions to '/botty/speech/commands'
 
 Momentan ist es eine einfache Suche auf Woerter mit Semantischer bedeutung im einkommenden Sprachbefehl. 
 Danach die zusammenstellung einer Datenstruktur im JSON Format,
 welches die gewuenschte Aktion, das Objekt (bzw. Ort) der Aktion, und Attribute des Objekts beinhaltet (bis jetzt nur Farbe)
-Eingabe ist der erkannte Text vom Recognizer durch Topic '/grammar_data'
-JSON OBjekt wird zu '/botty/parser/commands' gesendet
+Eingabe ist der erkannte Text vom Recognizer durch Topic 'botty/speech/grammar_data'
+JSON OBjekt wird zu '/botty/speech/commands' gesendet
 
 Der Code ist noch sehr haesslich, für die 2. Demo reichts aber erstmal aus.
 
@@ -42,7 +43,7 @@ import json
 class Parser:
 	def __init__(self):
 		# Evntl. ein eigenen Message-Typ definieren, nicht einfach als String schicken ...
-		self.pub = rospy.Publisher('/botty/parser/commands', String, queue_size=10)
+		self.pub = rospy.Publisher('/botty/speech/commands', String, queue_size=10)
 		
 		# Liste von Tokens, sollte man evtl. in eigene Klasse packen, per Datei einlesen
 		# Muss mit .gram Datei uebereinstimmen
@@ -95,5 +96,5 @@ class Parser:
 if __name__ == '__main__':
 	rospy.init_node('parser')
 	parser = Parser()
-	rospy.Subscriber('/grammar_data', String, parser.callback)
+	rospy.Subscriber('botty/speech/grammar_data', String, parser.callback)
 	rospy.spin()

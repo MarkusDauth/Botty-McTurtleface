@@ -1,5 +1,12 @@
 #!/usr/bin/python
 
+'''
+Author: David Kostka
+
+Description:
+Keyword based arm control
+'''
+
 import rospy
 from std_msgs.msg import String
 
@@ -28,7 +35,7 @@ if __name__ == '__main__':
     rospy.init_node('control')
     controller = Controller()
 
-    rospy.Subscriber("/botty/parser/commands", String, controller.kws_callback)
+    rospy.Subscriber("/botty/speech/commands", String, controller.kws_callback)
     rospy.Subscriber("botty/camera/object_location", String, controller.camera_callback)
 
     rospy.spin()

@@ -1,4 +1,15 @@
 #!/usr/bin/python
+
+'''
+Author: David Kostka
+
+Description:
+Keyword based movement control
+
+Uses modified Code from Package:
+https://github.com/gorinars/ros_voice_control
+'''
+
 import rospy
 
 from geometry_msgs.msg import Twist
@@ -6,7 +17,7 @@ from std_msgs.msg import String
 import time
 
 class ASRControl(object):
-    """Class to handle turtlebot simulation control using voice"""
+    """Class to handle turtlebot control using voice"""
 
     def __init__(self):
 
@@ -17,14 +28,14 @@ class ASRControl(object):
 	
 
         # initialize node
-        rospy.init_node("asr_control")
+        rospy.init_node("base_control")
         rospy.on_shutdown(self.shutdown)
 	self.r = rospy.Rate(10)
         # Initializing publisher with buffer size of 10 messages
         self.pub_ = rospy.Publisher("mobile_base/commands/velocity", Twist, queue_size=10)
 
         # Subscribe to kws output
-        rospy.Subscriber("/botty/parser/commands", String, self.parse_asr_result)
+        rospy.Subscriber("/botty/speech/commands", String, self.parse_asr_result)
         rospy.spin()
 
     def parse_asr_result(self, detected_words): #pylint: disable=too-many-branches
@@ -63,7 +74,7 @@ class ASRControl(object):
         """
         command executed after Ctrl+C is pressed
         """
-        rospy.loginfo("Stop ASRControl")
+        rospy.loginfo("Stop base_control")
         self.pub_.publish(Twist())
         rospy.sleep(1)
 

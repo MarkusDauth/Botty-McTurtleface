@@ -2,14 +2,14 @@
     <!--
     Starting speech recognizer
     -->
-    <include file="$(find parser)/launch/keyword_recognition.launch"></include>
+    <include file="$(find speech)/launch/recognizer.launch"></include>
 
     <!--
     Node for parsing of speech data
     -->
     <node
         name="parser"
-        pkg="parser"
+        pkg="speech"
         type="parser.py"
         output="screen"
         >

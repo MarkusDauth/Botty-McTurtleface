@@ -10,7 +10,7 @@ Das Botty-Package ist nochmal in mehrere Subpackages aufgeteilt.
 - arm
 - camera
 - lidar
-- speech_parser
+- speech
 - controller
 
 # Installation
@@ -52,7 +52,7 @@ catkin_make
 Troubleshooting: Es ist wichtig driver_common VORHER zu kompilieren, 
 bevor hokuyo_node hinzugefügt wird. Sonst scheitert der Prozess!
 
-## speech_parser
+## Speech
 Falls 'pip' nicht installiert ist:
 ```
 sudo apt install python-pip
@@ -72,13 +72,12 @@ Pocketsphinx installieren:
 sudo pip install pocketsphinx
 ```
 
-Im Ordner “src” des Workspace dieses Repository downloaden und kompilieren:
+Kompilieren:
 ```
-git clone https://github.com/david-kostka/cmu_pocketsphinx
 catkin_make
 ```
 
-## controller
+## Controller
 Bis jetzt keine Dependencies
 
 ## Package
@@ -120,24 +119,30 @@ rosrun hokuyo_node hokuyo_node
 rosrun lidar hokuyoInterpreter.py
 ```
 
-## speech_parser
+## Speech
 Recognizer/Parser starten:
 ```
-roslaunch parser parser.launch
+roslaunch speech parser.launch
 ```
 
-## controller
+Nur Recognizer starten:
+```
+roslaunch speech recognizer.launch
+```
+
+
+## Controller
 Arm-steuerung per Sprachkommandos:
 ```
-roslaunch control arm_control.launch
+roslaunch controller arm_control.launch
 ```
 
 Navigation per Sprachkommandos:
 ```
-roslaunch control base_control.launch
+roslaunch controller base_control.launch
 ```
 
-Der speech_parser wird beim launch automatisch gestartet, muss also nicht davor gestartet werden.
+Das Speech-Modul wird beim launch automatisch gestartet, muss also nicht davor gestartet werden.
 
 ## Kamera
 Auf eigenem Rechner starten:
