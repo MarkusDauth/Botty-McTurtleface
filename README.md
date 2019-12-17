@@ -72,9 +72,12 @@ Pocketsphinx installieren:
 sudo pip install pocketsphinx
 ```
 
-Kompilieren:
+Package 'audio_common' für TTS und Sounds:
 ```
+sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+git clone https://github.com/ros-drivers/audio_common/tree/master/sound_play
 catkin_make
+rosdep install sound_play
 ```
 
 ## Controller
@@ -130,6 +133,7 @@ Nur Recognizer starten:
 roslaunch speech recognizer.launch
 ```
 
+Dazu benötigte Nodes 'send_audio.py' und 'soundplay_node.py' werden automatisch mit gestartet.
 
 ## Controller
 Arm-steuerung per Sprachkommandos:

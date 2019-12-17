@@ -36,6 +36,7 @@ Oder das verketten von Befehlen:
 '''
 
 import rospy
+from talker import *
 from std_msgs.msg import String
 import re
 import json
@@ -45,6 +46,9 @@ class Parser:
 		# Evntl. ein eigenen Message-Typ definieren, nicht einfach als String schicken ...
 		self.pub = rospy.Publisher('/botty/speech/commands', String, queue_size=10)
 		
+		# Talker für TTS und sounds
+		self.talker = Talker()		
+
 		# Liste von Tokens, sollte man evtl. in eigene Klasse packen, per Datei einlesen
 		# Muss mit .gram Datei uebereinstimmen
 		action_list = {"go", "grab", "bring"}
@@ -65,8 +69,8 @@ class Parser:
 		txt = detected_words.data.lower()
 
 		action = "undef"
-		obj = "none"
-		attr = "none"
+		obj = ""
+		attr = ""
 		
 		try: 	action = self.actions.search(txt).group(0)
 		except: self.sendError("Unknown Action")
@@ -74,23 +78,26 @@ class Parser:
 		# Wenn Aktion "bring" oder "grab" ist, enthaltet sie auch ein Objekt
 		if action in "bring grab":
 			try:	obj = self.objects.search(txt).group(0)
-			except: self.sendError("Unknown object for action: " + action)
+			except: self.sendError("Invalid object for action: " + action)
 			if self.attributes.search(txt):			
 				attr = self.attributes.search(txt).group(0)
 		# Bei "go" kann das Objekt nur ein Ort sein		
 		elif action in "go":
 			try: 	obj = self.places.search(txt).group(0)
-			except: self.sendError("Unknown place for action: " + action)
+			except: self.sendError("Invalid place for action: " + action)
 
 		# Command wird in JSON Format gesendet
 		if self.is_valid:
 			json_txt = json.dumps({"action": action, "object": {"name": obj, "attr": attr}})
 			self.pub.publish(json_txt)
 			rospy.loginfo(json_txt)
+			self.talker.play(2)
+			self.talker.say(action + 'ing' + txt[len(action):])
 
 	# Mögliche Fehler entstehen durch fehlende übereinstimmung der Tokens mit der Grammatik
 	def sendError(self, txt):
-		print(txt)
+		self.talker.play(3)
+		self.talker.say(txt)
 		self.is_valid = False
 
 if __name__ == '__main__':

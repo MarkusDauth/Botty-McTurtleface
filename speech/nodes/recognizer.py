@@ -18,6 +18,7 @@ import os
 
 import rospy
 import time
+from talker import *
 from std_msgs.msg import String
 from pocketsphinx.pocketsphinx import *
 from sphinxbase.sphinxbase import *
@@ -34,6 +35,9 @@ class Recognizer(object):
         rospy.init_node("recognizer")
         # Call custom function on node shutdown
         rospy.on_shutdown(self.shutdown)
+	
+	# Talker to play confirmation sounds	
+	self.talker = Talker()
 
         # Params
 
@@ -202,6 +206,8 @@ class Recognizer(object):
 		self.decoder.end_utt()
 
 		rospy.loginfo("Detected keyphrase, listening ...")
+		
+		self.talker.play(1)
 		self.decoder.set_search(self.gram)	 
 		
 		self.decoder.start_utt()

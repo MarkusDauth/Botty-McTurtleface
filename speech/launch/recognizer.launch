@@ -42,4 +42,15 @@
         <param name="rule" value="$(arg rule)"/>
 
     </node>
+
+    <!--
+    Node to play sounds 
+    -->
+    <node
+        name="sound_play"
+        pkg="sound_play"
+        type="soundplay_node.py"
+        output="screen"
+        >
+    </node>
 </launch>
