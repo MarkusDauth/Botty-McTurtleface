@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#this document is made within a study project of the 'Hochschule Kaiserslautern'
+#made by Felix Mayer
+#version 0.5
+
 import rospy
 from geometry_msgs.msg import Twist
 import actionlib
