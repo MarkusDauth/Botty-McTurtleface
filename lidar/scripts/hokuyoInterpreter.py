@@ -1,10 +1,10 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import rospy
 from xml.dom.minidom import *
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import Twist
 from std_msgs.msg import String
-#import os
+from lidar.msg import Hints
 
 rospy.loginfo("-----")
 
@@ -109,7 +109,6 @@ def runCallibrate(data):
     print("-Starting Callibration Session with Callibration-Range "+str(callibration)+"meters -")
     rospy.loginfo("-----")
     messurements=len(data.ranges)
-    #print(messurements)
     for counter in range(0,messurements):
         if data.ranges[counter]<=callibration:
             deathAngles.append(counter)
@@ -119,68 +118,101 @@ def runCallibrate(data):
     rospy.loginfo(deathAngles)
     rospy.loginfo("-----")
 
-    #Prozentuale Umrechnung der Winkelgrad Verhaeltnisse zu der Wahrnehmungsgroesze (Hokuyo hat 240 Grad Wahrnehmung und liest ca. 512 Werte)
-    #Front Seiten Umrechnung
-    frontSiteProzent=float(hokuyoRange)/frontSites
-    messurementsFrontSites=int(float(messurements)/frontSiteProzent)
-    #Front Start Umrechnung
-    frontStartProzent=float(hokuyoRange)/frontStart
-    messurementsFrontStart=int(float(messurements)/frontStartProzent)
-    #Front End Umrechnung
-    frontEndProzent=float(hokuyoRange)/frontEnd
-    messurementsFrontEnd=int(float(messurements)/frontEndProzent)
-    #Berrechnung der Inkrementiellen Seiten Reduktion
-    siteFrontIncrement=float(collisionBlocker)/messurementsFrontSites
 
-    #das selbe für links und rechts
-    #links
-    leftSiteProzent=float(hokuyoRange)/leftSites
-    messurementsLeftSites=int(float(messurements)/leftSiteProzent)
-    leftStartProzent=float(hokuyoRange)/leftStart
-    messurementsLeftStart=int(float(messurements)/leftStartProzent)
-    leftEndProzent=float(hokuyoRange)/leftEnd
-    messurementsLeftEnd=int(float(messurements)/leftEndProzent)
-    siteLeftIncrement=float(collisionBlocker)/messurementsLeftSites
-    #rechts
-    rigthSiteProzent=float(hokuyoRange)/rigthSites
-    messurementsRigthSites=int(float(messurements)/rigthSiteProzent)
-    rigthStartProzent=float(hokuyoRange)/rigthStart
-    messurementsRigthStart=int(float(messurements)/rigthStartProzent)
-    rigthEndProzent=float(hokuyoRange)/rigthEnd
-    messurementsRigthEnd=int(float(messurements)/rigthEndProzent)
-    siteRigthIncrement=float(collisionBlocker)/messurementsRigthSites
+
+    #perentage conversion of the angles into the messurements range(Hokuyo has 240 degree and is reading ca. 512 values)
+    frontSiteProzent=0
+    messurementsFrontSites=0
+    frontStartProzent=0
+    messurementsFrontStart=0
+    frontEndProzent=0
+    messurementsFrontEnd=0
+    siteFrontIncrement=0
+    #Front site conversion
+    if frontSites!=0:
+        frontSiteProzent=float(hokuyoRange)/frontSites
+        messurementsFrontSites=int(float(messurements)/frontSiteProzent)
+    #Front start conversion
+    if frontStart!=0:
+        frontStartProzent=float(hokuyoRange)/frontStart
+        messurementsFrontStart=int(float(messurements)/frontStartProzent)
+    #Front end conversion
+    if frontEnd!=0:
+        frontEndProzent=float(hokuyoRange)/frontEnd
+        messurementsFrontEnd=int(float(messurements)/frontEndProzent)
+    #Calculation of the incrementiell site reduction
+    if messurementsFrontSites!=0:
+        siteFrontIncrement=float(collisionBlocker)/messurementsFrontSites
+    #same for left and rigth
+    #left
+    leftSiteProzent=0
+    messurementsLeftSites=0
+    leftStartProzent=0
+    messurementsLeftStart=0
+    leftEndProzent=0
+    messurementsLeftEnd=0
+    siteLeftIncrement=0
+    if leftSites!=0:
+        leftSiteProzent=float(hokuyoRange)/leftSites
+        messurementsLeftSites=int(float(messurements)/leftSiteProzent)
+    if leftStart!=0:
+        leftStartProzent=float(hokuyoRange)/leftStart
+        messurementsLeftStart=int(float(messurements)/leftStartProzent)
+    if leftEnd!=0:
+        leftEndProzent=float(hokuyoRange)/leftEnd
+        messurementsLeftEnd=int(float(messurements)/leftEndProzent)
+    if messurementsLeftSites!=0:
+        siteLeftIncrement=float(collisionBlocker)/messurementsLeftSites
+    #rigth
+    rigthSiteProzent=0
+    messurementsRigthSites=0
+    rigthStartProzent=0
+    messurementsRigthStart=0
+    rigthEndProzent=0
+    messurementsRigthEnd=0
+    siteRigthIncrement=0
+    if rigthSites!=0:
+        rigthSiteProzent=float(hokuyoRange)/rigthSites
+        messurementsRigthSites=int(float(messurements)/rigthSiteProzent)
+    if rigthStart!=0:
+        rigthStartProzent=float(hokuyoRange)/rigthStart
+        messurementsRigthStart=int(float(messurements)/rigthStartProzent)
+    if rigthEnd!=0:
+        rigthEndProzent=float(hokuyoRange)/rigthEnd
+        messurementsRigthEnd=int(float(messurements)/rigthEndProzent)
+    if messurementsRigthSites!=0:
+        siteRigthIncrement=float(collisionBlocker)/messurementsRigthSites
+
+def shutdown():
+    rospy.loginfo("Ros Shutdown")
 
 def hokuyoInterpreter():
     #starts Process
     global pub
-    #pub=rospy.Publisher('/mobile_base/commands/velocity',Twist,queue_size=10)
-    pub=rospy.Publisher('/botty/hokuyoInterpreter',String,queue_size=10)
+    pub=rospy.Publisher('/botty/hokuyoInterpreter',Hints,queue_size=10)
     rospy.init_node('hokuyoInterpreter',anonymous=False)
     rospy.Subscriber("scan",LaserScan,callback)
     rospy.spin()
 
 def proofHints(messurementsStart,messurementsEnd,messurementsSites,siteIncrement,data,hintList):
     #checking for Hints
-    siteDistance=0.0 #Verringerung des Sicherheitsabstand zur Seite hin
-    hintList.clear() #clean up the last Collection of dedected hints
-    for degree in range(messurementsStart,messurementsEnd+1):
-        if (degree<(messurementsSites+messurementsStart)): #wenn der derzeitige Abschnitt sich aud der linken Site befindet,erhoehe die siteIncrement
-            siteDistance+=siteIncrement
-        if ((messurementsEnd-messurementsSites)<=(messurementsStart+(degree-messurementsStart))):  #wenn der derzeitige Abschnitt sich aud der rechten RigthSite befindet,verringere die siteRigthIncrement
-            siteDistance-=siteIncrement
-        secureRange=(radius+constantSecureRange+siteDistance)/100 # '/100' um die Cm in Meter umzurechnen
-	    #print("Grad: "+str(degree)+" Value: "+str(data.ranges[degree])+" Problem-Range: "+str(secureRange))
-        if (str(data.ranges[degree])!="inf"):
-            #wenn kein toter Winkel vorliegt und der Sicherheitsabstand nicht gewaehrleistet ist
-            if ((degree not in deathAngles)and((data.ranges[degree])<(secureRange))):
-                #twist=Twist()
-                hintList.append([str(int(hokuyoRange/(float(messurements)/degree))),str(data.ranges[degree]),str(degree)])
-                #print("DANGER! angle: "+hintList[len(hintList)-1][0]+" with distance: "+hintList[len(hintList)-1][1]+" at messurement: "+hintList[len(hintList)-1][2])
-                print("-----")
-                #pub.publish(twist)
-                #break
+    siteDistance=0.0 #Reduction of the secure distance to the sites
+    for degree in range(messurementsStart,messurementsEnd):
+        if siteIncrement!=0:
+            if (degree<(messurementsSites+messurementsStart)): #if on the left site auf the messurement area, increase the 'siteIncrement'
+                siteDistance+=siteIncrement
+            if ((messurementsEnd-messurementsSites)<=(messurementsStart+(degree-messurementsStart))):  #if on the rigth site auf the messurement area, reduce the 'siteIncrement'
+                siteDistance-=siteIncrement
         else:
-            #print("'inf' got called; angle: "+str(degree)+" "+str(data.ranges[degree]))
+            siteDistance=collisionBlocker
+        secureRange=(radius+constantSecureRange+siteDistance)/100 # '/100' => cm to meter
+        if (str(data.ranges[degree])!="inf"):
+	    angle=int(hokuyoRange/(float(messurements)/degree))
+            #if there's no deathangle AND no hints are to near AND this angle value is not already inside the container
+            if ((degree not in deathAngles)and((data.ranges[degree])<(secureRange))and(angle not in hintList)):
+                hintList.append(int(hokuyoRange/(float(messurements)/degree)))  #angle             
+                print("-----")
+        else:
             pass
     return hintList
 
@@ -203,12 +235,11 @@ def callback(data):
     #/
     global pub
     global messurements
-    #Callibrates ones
-    global singleCallibrate
     frontHints=[]
     leftHints=[]
     rigthHints=[]
-    hints=[leftHints,frontHints,rigthHints]
+    #Callibrates ones
+    global singleCallibrate
     if singleCallibrate:
         runCallibrate(data)
         singleCallibrate=False
@@ -217,23 +248,20 @@ def callback(data):
         frontHints=proofHints(messurementsFrontStart,messurementsFrontEnd,messurementsFrontSites,siteFrontIncrement,data,frontHints)
         leftHints=proofHints(messurementsLeftStart,messurementsLeftEnd,messurementsLeftSites,siteLeftIncrement,data,leftHints)
         rigthHints=proofHints(messurementsRigthStart,messurementsRigthEnd,messurementsRigthSites,siteRigthIncrement,data,rigthHints)
-        #sende die Hint Informationen, falls welche vorliegen
+        #send hint informationen
         print("Left: "+str(len(leftHints))+" hints counted")
         print("Front: "+str(len(frontHints))+" hints counted")
         print("Rigth: "+str(len(rigthHints))+" hints counted")
-        if ((len(leftHints)+len(frontHints)+len(rigthHints))>0):
-            print("Hints dedected!")
-            pub.publish(hints)
-        else:
-            print("no hints dedected")
-        print("-----")
+        output=Hints()
+        output.front=frontHints
+	#Note that the Hokuyo is messing counter-clockwise (ger="entgegen dem Uhrzeigersinn"), because of that are left and rigth 	  #swapped. Left and rigth are in this code orientated on the driving direction
+        output.rigth=leftHints
+        output.left=rigthHints
+        pub.publish(output)
+    print("-----")
 
 
 if __name__=='__main__':
-    try:
-        checkRanges()
-        hokuyoInterpreter()
-        rospy.loginfo("Node and Process ended | HokuyoInterpreter")
-        print(deathAngles)
-    except:
-        raise SystemError('If u end here, u have serious trouble...')
+    checkRanges()
+    hokuyoInterpreter()
+    rospy.loginfo("Node and Process ended | HokuyoInterpreter")
