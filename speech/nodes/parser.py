@@ -38,23 +38,50 @@ Oder das verketten von Befehlen:
 import rospy
 from talker import *
 from std_msgs.msg import String
+from controller.msg import Command, Entity
+#from controller.Botty import *
 import re
-import json
+
+from enum import Enum
+class Action:
+	GO = 1
+	GRAB = 2
+	BRING = 3
+	STOP = 4
+
+	SYNONYMS = 	{
+			STOP: ['stop', 'halt', 'abort', 'kill', 'panic'], 
+			GO: ['go', 'move'], 
+			GRAB: ['grab', 'hold', 'take'], 
+			BRING: ['bring']
+			}
+
+	@classmethod
+	def synonym(cls, txt):
+		txt = txt.lower()
+		for nr, synlist in cls.SYNONYMS.items():
+			for syn in synlist:
+				if txt == syn:
+					return nr
+	@classmethod
+	def name(cls, num):
+		return cls.SYNONYMS[num][0]
 
 class Parser:
 	def __init__(self):
 		# Evntl. ein eigenen Message-Typ definieren, nicht einfach als String schicken ...
-		self.pub = rospy.Publisher('/botty/speech/commands', String, queue_size=10)
+		self.pub = rospy.Publisher('/botty/speech/commands', Command, queue_size=10)
+		self.pub_cmd = rospy.Publisher('/botty/controller/stop', Command, queue_size=10)
 		
 		# Talker für TTS und sounds
 		self.talker = Talker()		
 
 		# Liste von Tokens, sollte man evtl. in eigene Klasse packen, per Datei einlesen
 		# Muss mit .gram Datei uebereinstimmen
-		action_list = {"go", "grab", "bring"}
+		action_list = {"go", "grab", "bring", "stop", "abort"}
 		attr_list = {"blue", "red", "green", "white", "black"}
 		obj_list = {"ball", "cup", "object"}
-		place_list = {"kitchen", "living room", "bedroom", "garage"}
+		place_list = {"kitchen", "living room", "bedroom", "garage", "docking station"}
 
 		# Regex Objekte zur Suche 
 		self.actions = re.compile("|".join(action_list))
@@ -67,32 +94,36 @@ class Parser:
 	def callback(self, detected_words):
 		self.is_valid = True
 		txt = detected_words.data.lower()
-
-		action = "undef"
-		obj = ""
-		attr = ""
 		
-		try: 	action = self.actions.search(txt).group(0)
+		cmd = Command()
+		obj = Entity()
+
+		try: 	action = Action.synonym(self.actions.search(txt).group(0))
 		except: self.sendError("Unknown Action")
 		
+		act_str = Action.name(action)
+		
+		if action == Action.STOP:
+			self.pub_cmd.publish(cmd)
 		# Wenn Aktion "bring" oder "grab" ist, enthaltet sie auch ein Objekt
-		if action in "bring grab":
-			try:	obj = self.objects.search(txt).group(0)
-			except: self.sendError("Invalid object for action: " + action)
+		elif action == Action.BRING or action == Action.GRAB:
+			try:	obj.name = self.objects.search(txt).group(0)
+			except: self.sendError("Invalid object for action: " + act_str)
 			if self.attributes.search(txt):			
-				attr = self.attributes.search(txt).group(0)
+				obj.attr.append(self.attributes.search(txt).group(0))
 		# Bei "go" kann das Objekt nur ein Ort sein		
-		elif action in "go":
-			try: 	obj = self.places.search(txt).group(0)
-			except: self.sendError("Invalid place for action: " + action)
-
+		elif action == Action.GO:
+			try: 	obj.name = self.places.search(txt).group(0)
+			except: self.sendError("Invalid place for action: " + act_str)
+		
 		# Command wird in JSON Format gesendet
-		if self.is_valid:
-			json_txt = json.dumps({"action": action, "object": {"name": obj, "attr": attr}})
-			self.pub.publish(json_txt)
-			rospy.loginfo(json_txt)
+		if self.is_valid and action != Action.STOP:
+			cmd.action = action
+			cmd.obj = obj
+			rospy.loginfo(cmd)
+			self.pub.publish(cmd)
 			self.talker.play(2)
-			self.talker.say(action + 'ing' + txt[len(action):])
+			self.talker.say(act_str + 'ing' + txt[len(act_str):])
 
 	# Mögliche Fehler entstehen durch fehlende übereinstimmung der Tokens mit der Grammatik
 	def sendError(self, txt):
