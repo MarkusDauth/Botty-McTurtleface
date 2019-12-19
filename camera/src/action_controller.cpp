@@ -4,7 +4,7 @@
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/String.h>
 #include <opencv2/opencv.hpp>
-
+#include "camera/FindObjects.h"
 #define SMILE 4
 #define ARROW_LEFT 3
 #define ARROW_UP 5
@@ -17,11 +17,25 @@ int camera_center = 320; // left 0, right 640
 float max_ang_vel = 0.6;
 float min_ang_vel = 0.4;
 float ang_vel = 0;
+std_msgs::Float32MultiArrayPtr temp;
+
+bool getObject(camera::FindObjects::Request &req, camera::FindObjects::Response &res) {
+	if(temp->data.size() > 0){
+	if((int) temp[0] == 25 || (int) temp[0] == 26)
+	int object_id = temp->data[0];	
+	res.object = "red arrow";
+	return true;	
+	}
+	return false;
+	
+}
 
 void objectCallback(const std_msgs::Float32MultiArrayPtr &object)
 {
+	temp = object;
+  
 
-   std_msgs::String obj_loc;
+ std_msgs::String obj_loc;
    
    if (object->data.size() > 0)
    {
@@ -94,6 +108,7 @@ int main(int argc, char **argv)
    ros::Subscriber sub = n.subscribe("/objects", 1, objectCallback);
    ros::Rate loop_rate(50);
    object_location_pub = n.advertise<std_msgs::String>("/botty/camera/object_location",1);
+   ros::ServiceServer service = n.advertiseService("find_object", getObject);
    while (ros::ok())
    {
       ros::spinOnce();
