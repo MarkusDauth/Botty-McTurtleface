@@ -21,10 +21,10 @@ std_msgs::Float32MultiArrayPtr temp;
 
 bool getObject(camera::FindObjects::Request &req, camera::FindObjects::Response &res) {
 	if(temp->data.size() > 0){
-	if((int) temp[0] == 25 || (int) temp[0] == 26)
-	int object_id = temp->data[0];	
+	if((int) temp->data[0] == 25 || (int) temp->data[0] == 26){
 	res.object = "red arrow";
 	return true;	
+	}
 	}
 	return false;
 	
