@@ -75,7 +75,7 @@ sudo pip install pocketsphinx
 Package 'audio_common' für TTS und Sounds:
 ```
 sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-git clone https://github.com/ros-drivers/audio_common/tree/master/sound_play
+git clone https://github.com/ros-drivers/audio_common.git
 catkin_make
 rosdep install sound_play
 ```

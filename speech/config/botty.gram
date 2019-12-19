@@ -15,16 +15,15 @@ grammar commands;
  * grab a white cup
  */
 
-
-public <command> = <action> (<object> | <position>);
+public <command> = <keyword> | (<action> (<object> | <position>));
 <object> = [THE | A] [<attr>] (BALL | CUP | OBJECT);
 <position> = [<pp>] ([THE] <place>);
 
-//<keyword> = (STOP | GOODBYE | WAIT | CONTINUE);
+<keyword> = (STOP | ABORT);
 <action> = (GO | GRAB | BRING);
 <attr> = (BLUE | RED | GREEN | WHITE | BLACK);
 <pp> = (FROM | TO | AT | IN);
 <nr> = (ONE | TWO | THREE | FOUR | FIVE | SIX | SEVEN | EIGHT | NINE | TEN);
-<place> = (KITCHEN | LIVING ROOM | BEDROOM | GARAGE);
+<place> = (KITCHEN | LIVING ROOM | BEDROOM | GARAGE | DOCKING STATION);
 
 

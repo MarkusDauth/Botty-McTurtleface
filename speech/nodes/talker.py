@@ -29,7 +29,7 @@ class Talker:
 	#print 'Volume: %s' % volume
 
 	self.soundhandle.say(txt, self.voice, self.volume)
-	#rospy.sleep(1)
+	rospy.sleep(1)
 
     def play(self, num):
 	print('Playing sound nr.: %s' % num)
