@@ -1,0 +1,12 @@
+<launch>
+    <!--
+    Node for parsing of speech data
+    -->
+    <node
+        name="parser"
+        pkg="speech"
+        type="parser.py"
+        output="screen"
+        >
+    </node>
+</launch>

@@ -16,14 +16,14 @@ grammar commands;
  */
 
 public <command> = <keyword> | (<action> (<object> | <position>));
-<object> = [THE | A] [<attr>] (BALL | CUP | OBJECT);
+<object> = [THE | A] [<attr>] (BALL | CUP | OBJECT | ARROW | ALL);
 <position> = [<pp>] ([THE] <place>);
 
 <keyword> = (STOP | ABORT);
-<action> = (GO | GRAB | BRING);
+<action> = (GO | GRAB | BRING | FIND);
 <attr> = (BLUE | RED | GREEN | WHITE | BLACK);
 <pp> = (FROM | TO | AT | IN);
 <nr> = (ONE | TWO | THREE | FOUR | FIVE | SIX | SEVEN | EIGHT | NINE | TEN);
-<place> = (KITCHEN | LIVING ROOM | BEDROOM | GARAGE | DOCKING STATION);
+<place> = (KITCHEN | LIVING ROOM | BEDROOM | GARAGE | DOCKING STATION | FORWARD | BACK | LEFT | RIGHT);
 
 

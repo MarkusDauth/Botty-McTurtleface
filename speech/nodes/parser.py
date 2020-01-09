@@ -48,12 +48,13 @@ class Action:
 	GRAB = 2
 	BRING = 3
 	STOP = 4
-
+	SEARCH = 5
 	SYNONYMS = 	{
 			STOP: ['stop', 'halt', 'abort', 'kill', 'panic'], 
 			GO: ['go', 'move'], 
 			GRAB: ['grab', 'hold', 'take'], 
-			BRING: ['bring']
+			BRING: ['bring'],
+			SEARCH: ['search', 'find']
 			}
 
 	@classmethod
@@ -78,10 +79,10 @@ class Parser:
 
 		# Liste von Tokens, sollte man evtl. in eigene Klasse packen, per Datei einlesen
 		# Muss mit .gram Datei uebereinstimmen
-		action_list = {"go", "grab", "bring", "stop", "abort"}
+		action_list = {"go", "grab", "bring", "stop", "abort", "find", "search"}
 		attr_list = {"blue", "red", "green", "white", "black"}
-		obj_list = {"ball", "cup", "object"}
-		place_list = {"kitchen", "living room", "bedroom", "garage", "docking station"}
+		obj_list = {"ball", "cup", "object", "arrow", "all"}
+		place_list = {"kitchen", "living room", "bedroom", "garage", "docking station", "forward", "back", "left", "right"}
 
 		# Regex Objekte zur Suche 
 		self.actions = re.compile("|".join(action_list))
@@ -106,7 +107,7 @@ class Parser:
 		if action == Action.STOP:
 			self.pub_cmd.publish(cmd)
 		# Wenn Aktion "bring" oder "grab" ist, enthaltet sie auch ein Objekt
-		elif action == Action.BRING or action == Action.GRAB:
+		elif action == Action.BRING or action == Action.GRAB or action == Action.SEARCH:
 			try:	obj.name = self.objects.search(txt).group(0)
 			except: self.sendError("Invalid object for action: " + act_str)
 			if self.attributes.search(txt):			
@@ -115,7 +116,7 @@ class Parser:
 		elif action == Action.GO:
 			try: 	obj.name = self.places.search(txt).group(0)
 			except: self.sendError("Invalid place for action: " + act_str)
-		
+
 		# Command wird in JSON Format gesendet
 		if self.is_valid and action != Action.STOP:
 			cmd.action = action
@@ -123,12 +124,12 @@ class Parser:
 			rospy.loginfo(cmd)
 			self.pub.publish(cmd)
 			self.talker.play(2)
-			self.talker.say(act_str + 'ing' + txt[len(act_str):])
+			#self.talker.say(act_str + 'ing ' + txt[len(act_str):])
 
 	# Mögliche Fehler entstehen durch fehlende übereinstimmung der Tokens mit der Grammatik
 	def sendError(self, txt):
 		self.talker.play(3)
-		self.talker.say(txt)
+		#self.talker.say(txt)
 		self.is_valid = False
 
 if __name__ == '__main__':

@@ -7,12 +7,14 @@ class Action:
 	GRAB = 2
 	BRING = 3
 	STOP = 4
-
+	SEARCH = 5	
+	
 	SYNONYMS = 	{
 			STOP: ['stop', 'halt', 'abort', 'kill', 'panic'], 
 			GO: ['go', 'move'], 
 			GRAB: ['grab', 'hold', 'take'], 
-			BRING: ['bring']
+			BRING: ['bring'],
+			SEARCH: ['search', 'find']
 			}
 
 	@classmethod

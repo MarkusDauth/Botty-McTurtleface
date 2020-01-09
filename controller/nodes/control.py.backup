@@ -1,0 +1,220 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+'''
+Author: David Kostka
+Date: 17.12.19
+
+Description:
+Control-Module for Botty.
+
+This class acts as a 'command center'.
+Its task is to plan, control, and distribute tasks to and from the different modules, wich are as follows:
+- arm
+- camera
+- lidar/navigation
+- speech
+- (controller)
+
+On an incoming command from 'speech' it starts a new thread with the specified action and its arguments.
+This thread can be further divided into sub-routines to acomplish the task.
+For example, on "Grab a red ball" botty might first search, then move to a red ball before actually grabbing it. 
+
+While the action is being handled by a thread, the main controller continues to listen for other commands.
+If another command comes in, it checks if this new task can be done concurrently.
+This might be a command like "what are you doing?".
+If it can't run concurrently, it gets thrown out and the user will be informed.
+Another option would be to put the new command in a queue.
+
+The new command could also be some type of interrupt, to stop or hold all currently running tasks.
+Interrupts will get passed onto all running tasks. 
+
+When a task is done, Botty sends feedback to the User about the result.
+It might also give feedback on progress.
+
+Idden/Entwürfe:
+Schnittstellen mit actionlib server/client?
+Camera.get_objects()
+Camera.get_object(obj)
+Arm.grab(coord)
+Nav.move_to(pos)
+
+class Object:
+    String name
+    String attr[]
+    Position pos
+    Coord cam_pos
+class Position:
+    String name
+    Coord coordinates
+
+Aktionen:
+go(pos)
+    - Nav.move_to(pos)
+grab(obj)
+    - Nav.move_to(obj.pos)
+    - cam_obj = Camera.get_objects()
+    - Arm.grab(obj.coord)
+bring(obj)
+    - current_pos = Nav.get_position()
+    - go(pos)
+    - grab(obj)
+    - go(current_pos)
+'''
+
+import rospy
+from Botty import *
+from geometry_msgs.msg import Twist
+from std_msgs.msg import String
+from controller.msg import Command, Entity
+import re
+import actionlib
+from kobuki_msgs.msg import AutoDockingAction, AutoDockingGoal
+from actionlib_msgs.msg import GoalStatus
+from threading import Thread
+
+from sound_play.msg import SoundRequest
+from sound_play.libsoundplay import SoundClient
+
+from camera.srv import *
+
+class Camera(object):
+	def __init__(self):
+		self.obj = ""
+		try: 
+			rospy.wait_for_service('/action_controller/find_object', rospy.Duration.from_sec(2))
+			rospy.loginfo("Camera initialized")
+		except:
+			rospy.loginfo("Camera failed to initialize")
+	
+	def found(self):
+		return self.obj
+
+	def find(self):
+		try:
+			self.findObj = rospy.ServiceProxy('/action_controller/find_object', FindObjects)
+			self.obj = self.findObj().object
+			return True
+		except rospy.ServiceException, e:
+			self.obj = ""
+			return False
+
+class Nav(object):
+	def __init__(self):
+		self.loc = { "docking station": (2,2) }
+
+		self.current = (0,0)
+		self.dock_client = actionlib.SimpleActionClient('dock_drive_action', AutoDockingAction)
+
+		try:
+			self.dock_client.wait_for_server(rospy.Duration.from_sec(2))
+			rospy.loginfo("Navigator initialized")
+		except:
+			rospy.loginfo("Navigator failed to initialize")
+	
+
+	def current_pos(self):
+		return self.current
+
+	def goto(self, pos):
+		if(pos == loc['docking station']):	
+			goal = AutoDockingGoal();
+			self.dock_client.send_goal(goal, feedback_cb=self.dock_feedback)
+			self.dock_client.wait_for_result()
+			print(self.dock_client.get_result())
+
+	def cancel(self):
+		self.dock_client.cancel_all_goals()
+
+class Controller(object):
+	def __init__(self):
+		# initialize node
+		rospy.init_node("control")
+		rospy.on_shutdown(self.shutdown)
+		#rate = rospy.Rate(10)
+
+		# Initializing publishers
+
+		# Sound handler
+		self.soundhandle = SoundClient()
+
+		self.voice = 'voice_kal_diphone'
+		self.volume = 1.0
+
+		# Modules
+		self.cam = Camera()
+		self.nav = Nav()
+
+		# Subscribe to speech commands
+		self.sub = rospy.Subscriber("/botty/speech/commands", Command, self.process_command)
+		# Subscribe to speech commands
+		self.sub = rospy.Subscriber("/botty/controller/stop", Command, self.stop_cmd)
+
+		rospy.loginfo("Controller initialized")
+
+	def process_command(self, cmd):
+		print(Action.name(cmd.action), cmd.obj.name, cmd.obj.attr)
+		
+		if cmd.action == Action.GO:
+			self.go(cmd.obj)
+		elif cmd.action == Action.GRAB:
+			self.grab(cmd.obj)
+		elif cmd.action == Action.SEARCH:
+			self.search(cmd.obj)
+
+	def stop_cmd(self, msg):
+		self.say('Stopping all actions')
+		self.stop_all()
+
+	# Stop all actions
+	def stop_all(self):
+		self.nav.cancel()
+
+	def go(self, obj):
+		print('Going to ' + obj.name + " ...")
+		self.nav.goto(obj)
+		
+	def dock_feedback(self, fb):
+		print 'Feedback: [DockDrive: ' + feedback.state + ']: ' + feedback.text		
+	
+	# Try to grab object
+	def grab(self, obj):
+		print('Grabbing ' + obj.name + " ...")
+		'''for p in [0, 10]
+			if obj.name == camera.getObject():
+				arm.grab(camera.getObject.pos)
+			else:
+				nav.turnLeft(10)
+				# wait for turn
+		#obj_list = camera.getObjects()
+		'''
+
+	# Search for object in camera view
+	def search(self, obj):
+		if self.cam.find(): 
+			if obj.name in self.cam.found():
+				if obj.attr[0] in self.cam.found():
+					self.say("Found " + self.cam.found())
+				else:
+					self.say("Found similar object: " + self.cam.found())
+			else:
+				self.say("Not found, but found: " + self.cam.found())
+		else: 
+			self.say("Couldn't find object")
+
+	def say(self, txt):
+		print('Saying: %s' % txt)
+		self.soundhandle.say(txt, self.voice, self.volume)
+
+	def shutdown(self):
+		rospy.loginfo("Stop Controller")
+		self.stop_all()
+		rospy.sleep(1)
+
+
+if __name__ == "__main__":
+	#try:
+	instance = Controller()
+	rospy.spin()
+	#except rospy.ROSInterruptException: pass
+

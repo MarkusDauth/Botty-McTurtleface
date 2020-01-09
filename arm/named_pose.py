@@ -31,7 +31,7 @@ plan = group.plan()
 
 rospy.sleep(1)
 
-group.go()
+group.go(wait=True)
 
 
 #Vorsichtshalber nochmal stoppen, falls doch noch eine Bewegung ausgefuehrt wird
