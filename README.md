@@ -122,6 +122,12 @@ rosrun hokuyo_node hokuyo_node
 rosrun lidar hokuyoInterpreter.py
 ```
 
+## MotorService
+In einem Terminal folgende Instruktionen folgen:
+```
+rosrun motor motorService.py
+```
+
 ## Speech
 Recognizer/Parser starten:
 ```
