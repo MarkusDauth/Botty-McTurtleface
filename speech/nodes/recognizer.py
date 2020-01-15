@@ -185,7 +185,6 @@ class Recognizer(object):
 	# Switch between Keyword and Grammar mode
 	if self.decoder.get_search() == 'kw':
 		self.keyword_search()
-		#time.sleep(1)
 		
 	else:
 		self.grammar_search()
@@ -199,6 +198,7 @@ class Recognizer(object):
 				rospy.loginfo('OUTPUT: ' + self.decoder.hyp().hypstr)
                     		self.pub_.publish(self.decoder.hyp().hypstr)
 				self.decoder.set_search('kw')
+				rospy.loginfo("Listening to Keyphrase")
 			self.decoder.start_utt()
 
     def keyword_search(self):
@@ -209,7 +209,7 @@ class Recognizer(object):
 		
 		self.talker.play(1)
 		self.decoder.set_search(self.gram)	 
-		
+		time.sleep(1)
 		self.decoder.start_utt()
  
     @staticmethod

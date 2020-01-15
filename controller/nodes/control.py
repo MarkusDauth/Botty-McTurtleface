@@ -61,6 +61,7 @@ class Nav(object):
 		try:
 			rospy.wait_for_service('motor')
 			self.job = rospy.ServiceProxy('motor', call)
+			self.stopper = rospy.ServiceProxy('motor', call)
 
 			if self.enable_dock:
 				self.init_dock()
@@ -86,25 +87,29 @@ class Nav(object):
 		
 		param=[]
 		command=call()
-		command.call="stop"
+		command.call="stopp"
 		command.param=param
-		self.job(command.call, command.param)
+		self.stopper(command.call, command.param)
 
 	def drive(self, meters):
 		param=[]
 		param.append(meters)
+		#param.append(1)
 		command=call()
 		command.call="forwardByMeters"
 		command.param=param
-		self.job(command.call, command.param)
+		return self.job(command.call, command.param).success
 
 	def turn(self, angle):
 		param=[]
 		param.append(angle)
 		command=call()
-		command.call="turnRigthByAngle"
+		if angle > 0:
+			command.call="turnRigthByAngle"
+		else:
+			command.call="turnLeftByAngle"
 		command.param=param
-		self.job(command.call, command.param)
+		return self.job(command.call, command.param).success
 	
 	def go_to(self, x, y):
 		param=[]
@@ -113,7 +118,7 @@ class Nav(object):
 		command=call()
 		command.call="moveToPosition"
 		command.param=param
-		self.job(command.call, command.param)
+		return self.job(command.call, command.param).success
 
 class Controller(object):
 	
@@ -134,6 +139,7 @@ class Controller(object):
 		# Sound handler
 		self.soundhandle = SoundClient()
 		self.voice = 'voice_kal_diphone'
+		#self.voice = 'voice_nitech_us_rms_arctic_hts'
 		self.volume = 1.0
 
 		# Modules
@@ -144,27 +150,35 @@ class Controller(object):
 		self.sub = rospy.Subscriber("/botty/speech/commands", Command, self.process_command)
 
 		rospy.loginfo("Controller initialized")
+		self.say("I am Botty McTurtleface")
 
 	def process_command(self, cmd):
 		print("Incoming command ...")
+		if cmd.action == Action.STOP:
+			self.stop_all()
+			return
+
 		if not self.mutator_thread.isAlive():
-			if cmd.action == Action.SEARCH:
-				self.thread = Thread(target=self.search, args=(cmd.obj,))
-				self.thread.start()
 			if cmd.action == Action.GO:
 				self.go(cmd.obj)
-		elif cmd.action == Action.STOP:
-			self.stop_all()
-		else:
-			print("Already doing something")
+				return
+		if not self.observer_thread.isAlive():
+			if cmd.action == Action.SEARCH:
+				self.observer_thread = Thread(target=self.search, args=(cmd.obj,))
+				self.observer_thread.start()
+				return
+		
+		self.say("I'm already doing something")
 
 	def stop_all(self):
-		print('Canceling actions')
+		self.say('Canceling actions')
 		self.nav.cancel()
 		print('Waiting for threads')
-		#if self.thread.isAlive():
-			#self.thread.join()
-		print('Stopped Actions')
+		if self.mutator_thread.isAlive():
+			self.mutator_thread.join()
+		if self.observer_thread.isAlive():
+			self.observer_thread.join()
+		self.say('Stopped all Actions')
 
 	def search(self, obj):
 		if obj.name == "all":
@@ -186,26 +200,25 @@ class Controller(object):
 	
 	def go(self, obj):	
 		if obj.name == "forward": 
-			self.mutator_thread = Thread(target=self.nav.drive, args=(1,))
-		#if obj.name == "back": 
-			#self.thread = Thread(target=self.nav.drive, args=(-1,))
+			self.mutator_thread = Thread(target=self.nav.drive, args=(0.4,))
 		elif obj.name == "right": 
-			self.thread = Thread(target=self.nav.turn, args=(10,))
-		#elif obj.name == "left": 
-			#self.thread = Thread(target=self.nav.turn, args=(10,))
+			self.mutator_thread = Thread(target=self.nav.turn, args=(90,))
+		elif obj.name == "left": 
+			self.mutator_thread = Thread(target=self.nav.turn, args=(-90,))
 		elif obj.name == "docking station" and self.nav.enable_dock:
-			self.thread = Thread(target=self.nav.dock)
+			self.mutator_thread = Thread(target=self.nav.dock)
 		elif obj.name == "position": 
-			self.thread = Thread(target=self.nav.go_to, args=(obj.attr[0], obj.attr[1], ))
+			self.mutator_thread = Thread(target=self.nav.go_to, args=(obj.attr[0], obj.attr[1], ))
 		else:
-			print("Unknown place or direction")
+			self.say("Unknown place or direction")
 			return
 		
-		print('Moving ' + obj.name + " ...")
-		self.thread.start()
+		self.say('Moving ' + obj.name + " ...")
+		self.mutator_thread.start()
 
 	def say(self, txt):
 		print('Saying: %s' % txt)
+		self.soundhandle.stopAll()
 		self.soundhandle.say(txt, self.voice, self.volume)
 
 	def shutdown(self):
