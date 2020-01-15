@@ -4,12 +4,12 @@
     <!-- 'start' shoud be smaller then 'end'-->
     <!-- minimum 'start' is '1' and maximium 'end' is '240'-->
     <angles>
-        <angle start="1" end="60" site="0">left</angle>
-        <angle start="180" end="240" site="0">rigth</angle>
+        <angle start="1" end="60" site="0">rigth</angle>
+        <angle start="180" end="240" site="0">left</angle>
         <angle start="30" end="210" site="45">front</angle>
     </angles>
     <!-- if a hint is bellow this range while using the front angle, this node is sending a massege to stop the motors-->
-    <collision range="15"/> <!-- wird von 'site' der Winkeln dynamisch verringert-->
+    <collision range="30"/> <!-- wird von 'site' der Winkeln dynamisch verringert-->
     <callibration range="0.25"/> <!-- Abstand der bei der Kallibirierung als 'toter Winkel' betrachtet wird -->
-    <constantSecureRange range="2"/> <!-- Sicherheitsabstand der im gegensatz zu 'collision' nicht von 'site' beeinflusst wird-->
+    <constantSecureRange range="5"/> <!-- Sicherheitsabstand der im gegensatz zu 'collision' nicht von 'site' beeinflusst wird-->
 </configs>
