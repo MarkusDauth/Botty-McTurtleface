@@ -37,41 +37,43 @@ from camera.srv import *
 
 class Camera(object):
 	def __init__(self):
-		self.obj = ""
 		try: 
 			rospy.wait_for_service('/action_controller/find_object')
 			rospy.loginfo("Camera initialized")
 		except:
 			rospy.loginfo("Camera failed to initialize")
 	
-	def found(self):
-		return self.obj
-
 	def find(self):
+		found = None
+
 		try:
 			self.findObj = rospy.ServiceProxy('/action_controller/find_object', FindObjects)
-			self.obj = self.findObj().object
-			return True
+			found = self.findObj().object
 		except rospy.ServiceException, e:
-			self.obj = ""
-			return False
+			rospy.loginfo("Camera failed")
+		
+		return found
 
 class Nav(object):
 	def __init__(self):
-		self.dock_client = actionlib.SimpleActionClient('dock_drive_action', AutoDockingAction)
-		try: 
-			rospy.wait_for_service('motor')
-		except:
-			rospy.loginfo("Motor failed to initialize")
-
-		self.job = rospy.ServiceProxy('motor', call)
+		self.enable_dock = False
 
 		try:
-			self.dock_client.wait_for_server(rospy.Duration.from_sec(2))
+			rospy.wait_for_service('motor')
+			self.job = rospy.ServiceProxy('motor', call)
+
+			if self.enable_dock:
+				self.init_dock()
+
 			rospy.loginfo("Navigator initialized")
 		except:
 			rospy.loginfo("Navigator failed to initialize")
+			return
 	
+	def init_dock(self):
+		self.dock_client = actionlib.SimpleActionClient('dock_drive_action', AutoDockingAction)
+		self.dock_client.wait_for_server(rospy.Duration.from_sec(5))
+
 	def dock(self):	
 		goal = AutoDockingGoal();
 		self.dock_client.send_goal(goal)
@@ -79,21 +81,22 @@ class Nav(object):
 		print(self.dock_client.get_result())
 
 	def cancel(self):
-		self.dock_client.cancel_all_goals()
+		if self.enable_dock:
+			self.dock_client.cancel_all_goals()
+		
+		param=[]
 		command=call()
 		command.call="stop"
-		command.param=None
+		command.param=param
 		self.job(command.call, command.param)
 
-
-
-	def drive(self, meter):
+	def drive(self, meters):
 		param=[]
-		param.append(meter)
+		param.append(meters)
 		command=call()
 		command.call="forwardByMeters"
 		command.param=param
-		self.job(command.call,command.param)
+		self.job(command.call, command.param)
 
 	def turn(self, angle):
 		param=[]
@@ -101,24 +104,35 @@ class Nav(object):
 		command=call()
 		command.call="turnRigthByAngle"
 		command.param=param
-		self.job(command.call,command.param)
+		self.job(command.call, command.param)
+	
+	def go_to(self, x, y):
+		param=[]
+		param.append(x)
+		param.append(y)
+		command=call()
+		command.call="moveToPosition"
+		command.param=param
+		self.job(command.call, command.param)
 
 class Controller(object):
 	
 	def __init__(self):
+		rospy.loginfo("Initializing Controller")
+
 		self.known_obj = {"ball", "cup", "object", "arrow"}
 
-		self.thread = Thread()
+		# Initializing Threads
+		self.mutator_thread = Thread()
+		self.observer_thread = Thread()
+
 		# initialize node
 		rospy.init_node("control")
 		rospy.on_shutdown(self.shutdown)
 		#rate = rospy.Rate(10)
 
-		# Initializing publishers
-
 		# Sound handler
-		self.soundhandle = SoundClient(blocking=True)
-
+		self.soundhandle = SoundClient()
 		self.voice = 'voice_kal_diphone'
 		self.volume = 1.0
 
@@ -128,65 +142,66 @@ class Controller(object):
 
 		# Subscribe to speech commands
 		self.sub = rospy.Subscriber("/botty/speech/commands", Command, self.process_command)
-		# Subscribe to speech commands
-		#self.sub = rospy.Subscriber("/botty/controller/stop", Command, self.stop_all)
 
 		rospy.loginfo("Controller initialized")
 
 	def process_command(self, cmd):
 		print("Incoming command ...")
-		if not self.thread.isAlive():
+		if not self.mutator_thread.isAlive():
 			if cmd.action == Action.SEARCH:
 				self.thread = Thread(target=self.search, args=(cmd.obj,))
 				self.thread.start()
 			if cmd.action == Action.GO:
-				self.go(None, cmd.obj)
+				self.go(cmd.obj)
 		elif cmd.action == Action.STOP:
 			self.stop_all()
 		else:
 			print("Already doing something")
 
 	def stop_all(self):
-		self.say('Canceling actions')
+		print('Canceling actions')
 		self.nav.cancel()
 		print('Waiting for threads')
 		#if self.thread.isAlive():
 			#self.thread.join()
-
-	def dock(self):	
-		self.nav.dock()
+		print('Stopped Actions')
 
 	def search(self, obj):
 		if obj.name == "all":
 			self.say("I know: " + ', '.join(self.known_obj))
 			
 		else:
-			if self.cam.find(): 
-				if obj.name in self.cam.found():
-					if obj.attr[0] in self.cam.found():
-						self.say("Found " + self.cam.found())
+			found = self.cam.find()
+			if found: 
+				if obj.name in found:
+					if obj.attr[0] in found:
+						self.say("Found " + found)
 					else:
-						self.say("Found similar object: " + self.cam.found())
+						self.say("Found similar object: " + found)
 				else:
-					self.say("Not found, but found: " + self.cam.found())
+					self.say("Not found, but found: " + found)
 			else: 
 				self.say("Couldn't find object")
 				return
 	
-	def go(self, pos, obj):
-		print('Going ' + obj.name + " ...")	
-
+	def go(self, obj):	
 		if obj.name == "forward": 
-			self.thread = Thread(target=self.nav.drive, args=(1,))
+			self.mutator_thread = Thread(target=self.nav.drive, args=(1,))
+		#if obj.name == "back": 
+			#self.thread = Thread(target=self.nav.drive, args=(-1,))
 		elif obj.name == "right": 
 			self.thread = Thread(target=self.nav.turn, args=(10,))
 		#elif obj.name == "left": 
 			#self.thread = Thread(target=self.nav.turn, args=(10,))
-		elif obj.name == "docking station":
-			self.thread = Thread(target=self.dock, args=(cmd.obj,))
+		elif obj.name == "docking station" and self.nav.enable_dock:
+			self.thread = Thread(target=self.nav.dock)
+		elif obj.name == "position": 
+			self.thread = Thread(target=self.nav.go_to, args=(obj.attr[0], obj.attr[1], ))
 		else:
-			self.say("Unknown place or direction")
+			print("Unknown place or direction")
 			return
+		
+		print('Moving ' + obj.name + " ...")
 		self.thread.start()
 
 	def say(self, txt):
