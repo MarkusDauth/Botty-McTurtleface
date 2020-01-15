@@ -1,3 +1,9 @@
+<!--
+this document is made within a study project of the 'Hochschule Kaiserslautern'
+made by Felix Mayer
+version 1.0
+-->
+
 <configs>
     <!-- if not all 240 angles are used, the node will through an warning at beginning, but it can still be used-->
     <!-- dont use Float at angles-->

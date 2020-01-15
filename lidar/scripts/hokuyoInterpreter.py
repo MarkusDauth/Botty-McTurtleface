@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#this document is made within a study project of the 'Hochschule Kaiserslautern'
+#made by Felix Mayer
+#version 1.0
+
 import rospy
 from xml.dom.minidom import *
 from sensor_msgs.msg import LaserScan
