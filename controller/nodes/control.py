@@ -15,6 +15,7 @@ Its task is to plan, control, and distribute tasks to and from the different mod
 - lidar/navigation
 - speech
 - (controller)
+
 '''
 
 import rospy
@@ -34,6 +35,105 @@ from sound_play.libsoundplay import SoundClient
 from motor.srv import call,callResponse
 
 from camera.srv import *
+
+
+class Node():
+    """A node class for A* Pathfinding"""
+
+    def __init__(self, parent=None, position=None):
+        self.parent = parent
+        self.position = position
+
+        self.g = 0
+        self.h = 0
+        self.f = 0
+
+    def __eq__(self, other):
+        return self.position == other.position
+
+
+def astar(maze, start, end):
+    """Returns a list of tuples as a path from the given start to the given end in the given maze"""
+
+    # Create start and end node
+    start_node = Node(None, start)
+    start_node.g = start_node.h = start_node.f = 0
+    end_node = Node(None, end)
+    end_node.g = end_node.h = end_node.f = 0
+
+    # Initialize both open and closed list
+    open_list = []
+    closed_list = []
+
+    # Add the start node
+    open_list.append(start_node)
+
+    # Loop until you find the end
+    while len(open_list) > 0:
+
+        # Get the current node
+        current_node = open_list[0]
+        current_index = 0
+        for index, item in enumerate(open_list):
+            if item.f < current_node.f:
+                current_node = item
+                current_index = index
+
+        # Pop current off open list, add to closed list
+        open_list.pop(current_index)
+        closed_list.append(current_node)
+
+        # Found the goal
+        if current_node == end_node:
+            path = []
+            current = current_node
+            while current is not None:
+                path.append(current.position)
+                current = current.parent
+            return path[::-1] # Return reversed path
+
+        # Generate children
+        children = []
+        #for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]: # Adjacent squares
+	for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]: # Adjacent squares
+
+            # Get node position
+            node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
+
+            # Make sure within range
+            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:
+                continue
+
+            # Make sure walkable terrain
+            if maze[node_position[0]][node_position[1]] != 0:
+                continue
+
+            # Create new node
+            new_node = Node(current_node, node_position)
+
+            # Append
+            children.append(new_node)
+
+        # Loop through children
+        for child in children:
+
+            # Child is on the closed list
+            for closed_child in closed_list:
+                if child == closed_child:
+                    continue
+
+            # Create the f, g, and h values
+            child.g = current_node.g + 1
+            child.h = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
+            child.f = child.g + child.h
+
+            # Child is already in the open list
+            for open_node in open_list:
+                if child == open_node and child.g > open_node.g:
+                    continue
+
+            # Add the child to the open list
+            open_list.append(child)
 
 class Camera(object):
 	def __init__(self):
@@ -57,6 +157,7 @@ class Camera(object):
 class Nav(object):
 	def __init__(self):
 		self.enable_dock = False
+		self.orientation = [0, 1]
 
 		try:
 			rospy.wait_for_service('motor')
@@ -98,7 +199,7 @@ class Nav(object):
 		command=call()
 		command.call="forwardByMeters"
 		command.param=param
-		return self.job(command.call, command.param).success
+		return self.job(command.call, command.param)
 
 	def turn(self, angle):
 		param=[]
@@ -109,16 +210,81 @@ class Nav(object):
 		else:
 			command.call="turnLeftByAngle"
 		command.param=param
-		return self.job(command.call, command.param).success
+		return self.job(command.call, command.param)
 	
 	def go_to(self, x, y):
-		param=[]
-		param.append(x)
-		param.append(y)
-		command=call()
-		command.call="moveToPosition"
-		command.param=param
-		return self.job(command.call, command.param).success
+		maze = [[0, 0, 0, 0],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0],
+			[0, 0, 0, 0]]
+		
+		#coord = self.drive(0)
+		#start = (coord.x, coord.y)
+		end = (x, y)
+		start = (0, 0)
+
+		path = astar(maze, start, end)
+
+		print(path)
+		prev_coord = [0,0]
+		target_orient = [0,0]
+		target_orient[0] = path[0][0]
+		target_orient[1] = path[0][1]
+
+		for coord in path:
+			#print("Coordinates: " + str(coord))
+			#print("Previous: " + str(prev_coord))
+			
+			target_orient[0] = coord[0] - prev_coord[0]
+			target_orient[1] = coord[1] - prev_coord[1]
+			prev_coord = coord
+			
+			#print(self.orientation, target_orient)
+			self.turnTo(target_orient)
+			self.drive(0.4)
+			
+			print("\n")			
+			
+	def turnTo(self, target_orient):
+		angle = 0
+		
+		print(self.orientation, target_orient)	
+		add = self.orientation + target_orient
+
+		if target_orient == self.orientation or target_orient == [0,0]:
+			print("No turning")
+			return			
+
+		elif add == [0,0]:
+			angle = 180
+		else:
+			if self.orientation == [1,0]:
+				angle = target_orient[1] * 90
+			elif self.orientation == [0,1]:
+				angle = -target_orient[0] * 90
+			elif self.orientation == [-1,0]:
+				angle = -target_orient[1] * 90
+			elif self.orientation == [0,-1]:
+				angle = target_orient[0] * 90
+
+		'''elif target_orient[0] == 0:
+			if self.orientation[0] == 0:
+				angle = 180
+			else:
+				angle = (target_orient[1]*self.orientation[0]) * 90
+
+		elif target_orient[1] == 0:
+			if self.orientation[1] == 0:
+				angle = 180
+			else:
+				angle = (target_orient[0]*self.orientation[1]) * 90
+		'''
+
+		print("Turning: " + str(angle))
+		self.orientation[0] = target_orient[0]
+		self.orientation[1] = target_orient[1]
+		self.turn(angle)
 
 class Controller(object):
 	
@@ -208,7 +374,7 @@ class Controller(object):
 		elif obj.name == "docking station" and self.nav.enable_dock:
 			self.mutator_thread = Thread(target=self.nav.dock)
 		elif obj.name == "position": 
-			self.mutator_thread = Thread(target=self.nav.go_to, args=(obj.attr[0], obj.attr[1], ))
+			self.mutator_thread = Thread(target=self.nav.go_to, args=(int(obj.attr[0]), int(obj.attr[1]), ))
 		else:
 			self.say("Unknown place or direction")
 			return
