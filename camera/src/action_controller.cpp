@@ -4,6 +4,7 @@
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/String.h>
 #include <opencv2/opencv.hpp>
+#include <vector>
 #include "camera/FindObjects.h"
 #define SMILE 4
 #define ARROW_LEFT 3
@@ -21,13 +22,82 @@ std_msgs::Float32MultiArrayPtr temp;
 
 bool getObject(camera::FindObjects::Request &req, camera::FindObjects::Response &res) {
 	if(temp->data.size() > 0){
-	if((int) temp->data[0] == 25 || (int) temp->data[0] == 26){
-	res.object = "red arrow";
-	return true;	
-	}
-	}
+
+	std::vector<int> object_ids;
+	set_object_ids(&object_ids);
+
+	std::vector<std_msgs::String> objects_as_string;
+	map_object_id_to_string(&objects_as_string, &object_ids); 
+	
+	std_msgs::String [objects_as_string.size()] found_objects = std::copy(objects_as_string.begin()
+								,objects_as_string.end()
+								,objects_as_string);
+	res.object = &found_objects;
+	else 
 	return false;
 	
+}
+
+void set_object_ids(std::vector<int> &vector){
+	for(int i = 0; i < temp->data.size(); i+=12){
+		vector.push_back(data[i]);
+	}
+}
+
+void map_object_id_to_string(const std::vector<int> &object_ids,std::vector<std_msgs::String> &objects_as_string){
+
+	for(int object_id : object_ids){
+	std_msgs::String object_id_as_string = object_id_to_string(object_id);
+
+	if(object_id_as_string != nullptr)
+	objects_as_string.push_back(object_id_as_string);
+
+	}
+} 
+
+std::string object_id_to_string(int object_id){
+	if(equals_cocaCola_id(object_id))
+		return "Coca Cola Bottle";	
+	else if(equals_chalk_id(object_id))
+		return "Chalk";
+	else if(equals_shall_welten_magazine(object_id))
+		return "Schall welten Magazin";
+	else if(equals_flower(object_id))
+		return "Flower";
+	else if(equals_red_arrow(object_id))
+		return "Red Arrow";
+	else
+		return nullptr;
+}
+
+bool equals_cocaCola_id(int object_id){
+	if(object_id == 37 ||object_id == 38 ||object_id == 39 ||object_id == 40 || object_id == 41 ||object_id == 42 ||object_id == 43 || object_id == 56 || object_id == 57)
+		return true;
+	return false;	
+}
+
+bool equals_chalk_id(int object_id){
+	if(object_id == 44 ||object_id == 47 ||object_id == 48 ||object_id == 49)
+		return true;
+	return false;
+}
+
+bool equals_shall_welten_magazine(int object_id){
+	if(object_id == 54 ||object_id == 55)
+		return true;
+	return false;
+}
+
+bool equals_flower(int object_id){
+	if(object_id == 50 ||object_id == 51 ||object_id == 52 ||object_id == 53)
+		return true;
+	return false;
+}
+
+bool equals_red_arrow(int object_id){
+	if(object_id == 27 ||object_id == 26)
+		return true;
+	return false;
 }
 
 void objectCallback(const std_msgs::Float32MultiArrayPtr &object)

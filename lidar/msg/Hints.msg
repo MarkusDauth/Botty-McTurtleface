@@ -1,0 +1,6 @@
+int64[] frontAngle
+int64[] leftAngle
+int64[] rigthAngle
+float64[] frontDistance
+float64[] leftDistance
+float64[] rigthDistance

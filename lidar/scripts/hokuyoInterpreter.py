@@ -1,14 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#this document is made within a study project of the 'Hochschule Kaiserslautern'
+#made by Felix Mayer
+#version 1.0
+
 import rospy
 from xml.dom.minidom import *
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import String
 from lidar.msg import Hints
+from lidar.srv import HintsService,HintsServiceResponse
 
 rospy.loginfo("-----")
 
 #some globals
+global lastOutput
 global messurements
 global pub
 deathAngles=[]
@@ -33,8 +39,7 @@ global messurementsRigthSites
 global siteRigthIncrement
 
 #loading the configs out of the XML
-print("Trying to read the configs")
-print("-----")
+rospy.loginfo("Trying to read the configs")
 try:
     configs=parse("config.xml")
 except:
@@ -84,8 +89,7 @@ def checkRanges():
             if (element not in checkRange):
                 checkRange.append(element)
     if (len(checkRange)!=hokuyoRange):
-        print("WARNING - not all Degrees are used! ",len(checkRange)," counted")
-        print("-----")
+        rospy.logwarn("WARNING - not all Degrees are used! ",len(checkRange)," counted")
     
 
 def runCallibrate(data):
@@ -106,19 +110,18 @@ def runCallibrate(data):
     global messurementsRigthSites
     global siteRigthIncrement
     global messurements
-    print("-Starting Callibration Session with Callibration-Range "+str(callibration)+"meters -")
-    rospy.loginfo("-----")
+    rospy.loginfo("-Starting Callibration Session with Callibration-Range "+str(callibration)+"meters -")
     messurements=len(data.ranges)
     for counter in range(0,messurements):
         if data.ranges[counter]<=callibration:
-            deathAngles.append(counter)
-    print("Death Angles are...")
-    print(deathAngles)
+            if counter not in deathAngles:
+                deathAngles.append(counter)
+            if counter not in deathAngles:
+                deathAngles.append(counter-1)
+            if counter not in deathAngles:
+                deathAngles.append(counter+1)
     rospy.loginfo("Death Angles are...")
     rospy.loginfo(deathAngles)
-    rospy.loginfo("-----")
-
-
 
     #perentage conversion of the angles into the messurements range(Hokuyo has 240 degree and is reading ca. 512 values)
     frontSiteProzent=0
@@ -183,7 +186,7 @@ def runCallibrate(data):
     if messurementsRigthSites!=0:
         siteRigthIncrement=float(collisionBlocker)/messurementsRigthSites
 
-def shutdown():
+def stopp():
     rospy.loginfo("Ros Shutdown")
 
 def hokuyoInterpreter():
@@ -191,10 +194,14 @@ def hokuyoInterpreter():
     global pub
     pub=rospy.Publisher('/botty/hokuyoInterpreter',Hints,queue_size=10)
     rospy.init_node('hokuyoInterpreter',anonymous=False)
+    rospy.on_shutdown(stopp)
     rospy.Subscriber("scan",LaserScan,callback)
+    service = rospy.Service('lidar', HintsService, info)
     rospy.spin()
 
-def proofHints(messurementsStart,messurementsEnd,messurementsSites,siteIncrement,data,hintList):
+def proofHints(messurementsStart,messurementsEnd,messurementsSites,siteIncrement,data):
+    hintListAngle=[]
+    hintListDistance=[]
     #checking for Hints
     siteDistance=0.0 #Reduction of the secure distance to the sites
     for degree in range(messurementsStart,messurementsEnd):
@@ -207,14 +214,14 @@ def proofHints(messurementsStart,messurementsEnd,messurementsSites,siteIncrement
             siteDistance=collisionBlocker
         secureRange=(radius+constantSecureRange+siteDistance)/100 # '/100' => cm to meter
         if (str(data.ranges[degree])!="inf"):
-	    angle=int(hokuyoRange/(float(messurements)/degree))
-            #if there's no deathangle AND no hints are to near AND this angle value is not already inside the container
-            if ((degree not in deathAngles)and((data.ranges[degree])<(secureRange))and(angle not in hintList)):
-                hintList.append(int(hokuyoRange/(float(messurements)/degree)))  #angle             
-                print("-----")
+            angle=int(hokuyoRange/(float(messurements)/degree))
+            #if there's no deathangle AND the hints are to near AND this angle value is not already inside the container
+            if (degree not in deathAngles)and((data.ranges[degree])<(secureRange))and(angle not in hintListAngle):
+                hintListAngle.append(angle)
+                hintListDistance.append(data.ranges[degree])
         else:
             pass
-    return hintList
+    return hintListAngle,hintListDistance
 
 def callback(data):
     #Left Messurement Values
@@ -235,31 +242,49 @@ def callback(data):
     #/
     global pub
     global messurements
-    frontHints=[]
-    leftHints=[]
-    rigthHints=[]
+    global lastOutput
+    frontHintsAngle=[]
+    leftHintsAngle=[]
+    rigthHintsAngle=[]
+    frontHintsDistance=[]
+    leftHintsDistance=[]
+    rigthHintsDistance=[]
     #Callibrates ones
     global singleCallibrate
     if singleCallibrate:
         runCallibrate(data)
         singleCallibrate=False
-    else: #Work-Process after Callibration Run
+    else:
+        #Work-Process after Callibration Run
         #Proof for all Hints in every area
-        frontHints=proofHints(messurementsFrontStart,messurementsFrontEnd,messurementsFrontSites,siteFrontIncrement,data,frontHints)
-        leftHints=proofHints(messurementsLeftStart,messurementsLeftEnd,messurementsLeftSites,siteLeftIncrement,data,leftHints)
-        rigthHints=proofHints(messurementsRigthStart,messurementsRigthEnd,messurementsRigthSites,siteRigthIncrement,data,rigthHints)
+        frontAngle,frontDistance=proofHints(messurementsFrontStart,messurementsFrontEnd,messurementsFrontSites,siteFrontIncrement,data)
+        leftAngle,leftDistance=proofHints(messurementsLeftStart,messurementsLeftEnd,messurementsLeftSites,siteLeftIncrement,data)
+        rigthAngle,rigthDistance=proofHints(messurementsRigthStart,messurementsRigthEnd,messurementsRigthSites,siteRigthIncrement,data)
+        frontHintsAngle=frontAngle
+        frontHintsDistance=frontDistance
+        leftHintsAngle=leftAngle
+        leftHintsDistance=leftDistance
+        rigthHintsAngle=rigthAngle
+        rigthHintsDistance=rigthDistance
         #send hint informationen
-        print("Left: "+str(len(leftHints))+" hints counted")
-        print("Front: "+str(len(frontHints))+" hints counted")
-        print("Rigth: "+str(len(rigthHints))+" hints counted")
-        output=Hints()
-        output.front=frontHints
-	#Note that the Hokuyo is messing counter-clockwise (ger="entgegen dem Uhrzeigersinn"), because of that are left and rigth 	  #swapped. Left and rigth are in this code orientated on the driving direction
-        output.rigth=leftHints
-        output.left=rigthHints
+        rospy.loginfo("Left: "+str(len(leftHintsAngle))+" hints counted")
+        rospy.loginfo("Front: "+str(len(frontHintsAngle))+" hints counted")
+        rospy.loginfo("Rigth: "+str(len(rigthHintsAngle))+" hints counted")
+        output=HintsServiceResponse()
+        output.frontAngle=frontHintsAngle
+        #Note that the Hokuyo is messing counter-clockwise (ger="entgegen dem Uhrzeigersinn"), because of that are left and rigth 	  
+        #swapped. Left and rigth are in this code orientated on the driving direction
+        output.rigthAngle=rigthHintsAngle
+        output.leftAngle=leftHintsAngle
+        output.frontDistance=frontHintsDistance
+        output.leftDistance=leftHintsDistance
+        output.rigthDistance=rigthHintsDistance
+        lastOutput=output
         pub.publish(output)
-    print("-----")
 
+def info(stuff):
+    global lastOutput
+    return lastOutput
 
 if __name__=='__main__':
     checkRanges()
