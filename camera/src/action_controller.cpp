@@ -6,12 +6,17 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include "camera/FindObjects.h"
+#include "std_msgs/String.h"
+#include <algorithm>
+
+
 #define SMILE 4
 #define ARROW_LEFT 3
 #define ARROW_UP 5
 #define ARROW_DOWN 6
-#define SELFDEFINED_RANGE_X_MAX 640
-#define SELFDEFINED_RANGE_Y_MAX 430
+#define CAMERA_RANGE_X_MAX 640
+#define CAMERA_RANGE_Y_MAX 480
+#define PUBLISH_OBJECT_LOCATION 0
 int id = 0;
 ros::Publisher object_location_pub;
 int camera_center = 320; // left 0, right 640
@@ -20,55 +25,6 @@ float min_ang_vel = 0.4;
 float ang_vel = 0;
 std_msgs::Float32MultiArrayPtr temp;
 
-bool getObject(camera::FindObjects::Request &req, camera::FindObjects::Response &res) {
-	if(temp->data.size() > 0){
-
-	std::vector<int> object_ids;
-	set_object_ids(&object_ids);
-
-	std::vector<std_msgs::String> objects_as_string;
-	map_object_id_to_string(&objects_as_string, &object_ids); 
-	
-	std_msgs::String [objects_as_string.size()] found_objects = std::copy(objects_as_string.begin()
-								,objects_as_string.end()
-								,objects_as_string);
-	res.object = &found_objects;
-	else 
-	return false;
-	
-}
-
-void set_object_ids(std::vector<int> &vector){
-	for(int i = 0; i < temp->data.size(); i+=12){
-		vector.push_back(data[i]);
-	}
-}
-
-void map_object_id_to_string(const std::vector<int> &object_ids,std::vector<std_msgs::String> &objects_as_string){
-
-	for(int object_id : object_ids){
-	std_msgs::String object_id_as_string = object_id_to_string(object_id);
-
-	if(object_id_as_string != nullptr)
-	objects_as_string.push_back(object_id_as_string);
-
-	}
-} 
-
-std::string object_id_to_string(int object_id){
-	if(equals_cocaCola_id(object_id))
-		return "Coca Cola Bottle";	
-	else if(equals_chalk_id(object_id))
-		return "Chalk";
-	else if(equals_shall_welten_magazine(object_id))
-		return "Schall welten Magazin";
-	else if(equals_flower(object_id))
-		return "Flower";
-	else if(equals_red_arrow(object_id))
-		return "Red Arrow";
-	else
-		return nullptr;
-}
 
 bool equals_cocaCola_id(int object_id){
 	if(object_id == 37 ||object_id == 38 ||object_id == 39 ||object_id == 40 || object_id == 41 ||object_id == 42 ||object_id == 43 || object_id == 56 || object_id == 57)
@@ -100,17 +56,79 @@ bool equals_red_arrow(int object_id){
 	return false;
 }
 
+void set_object_ids(std::vector<int> &vector){
+	for(size_t i = 0; i < temp->data.size(); i+=12){
+		vector.push_back(temp->data[i]);
+	}
+}
+
+std::string object_id_to_string(int object_id){
+	if(equals_cocaCola_id(object_id))
+		return "Coca Cola Bottle";	
+	else if(equals_chalk_id(object_id))
+		return "Chalk";
+	else if(equals_shall_welten_magazine(object_id))
+		return "Schall welten Magazin";
+	else if(equals_flower(object_id))
+		return "Flower";
+	else if(equals_red_arrow(object_id))
+		return "Red Arrow";
+	else
+		return "invalid";
+}
+
+void map_object_id_to_string(const std::vector<int> &object_ids,std::vector<std::string> &objects_as_string){
+	
+	for(size_t i = 0; i < object_ids.size(); i++){
+	int object_id = object_ids[i];
+	std::string object_id_as_string = object_id_to_string(object_id);
+
+	if(object_id_as_string != "invalid"){
+	objects_as_string.push_back(object_id_as_string);
+	}
+
+	}
+} 
+
+void fill_found_objects_array(std::string found_objects [],const std::vector<std::string> &objects_as_string){
+	for(size_t i = 0; i < objects_as_string.size(); i++){
+		found_objects[i] = objects_as_string[i];
+	}
+}
+template <typename T>
+void remove_duplicates(std::vector<T>& vec)
+{
+  std::sort(vec.begin(), vec.end());
+  vec.erase(std::unique(vec.begin(), vec.end()), vec.end());
+}
+
+bool getObject(camera::FindObjects::Request &req, camera::FindObjects::Response &res) {
+	if(temp->data.size() > 0){
+
+	std::vector<int> object_ids;
+	set_object_ids(object_ids);
+
+	std::vector<std::string> objects_as_string;
+	map_object_id_to_string(object_ids, objects_as_string); 
+	remove_duplicates(objects_as_string);
+	res.object = objects_as_string;
+	}
+	else 
+	return false;
+	
+}
+
 void objectCallback(const std_msgs::Float32MultiArrayPtr &object)
 {
+
 	temp = object;
   
-
+#if(PUBLISH_OBJECT_LOCATION > 0)
  std_msgs::String obj_loc;
    
    if (object->data.size() > 0)
    {
       id = object->data[0];
-      //std::cout << "found object id: "<< id << std::endl;
       float objectWidth = object->data[1];
       float objectHeight = object->data[2];
       float x_pos;
@@ -164,7 +182,10 @@ void objectCallback(const std_msgs::Float32MultiArrayPtr &object)
    }
 
       object_location_pub.publish(obj_loc);
+#endif
 }
+
+
 
 int main(int argc, char **argv)
 {
