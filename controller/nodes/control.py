@@ -36,7 +36,6 @@ from motor.srv import call,callResponse
 
 from camera.srv import *
 
-
 class Node():
     """A node class for A* Pathfinding"""
 
@@ -147,17 +146,65 @@ class Camera(object):
 		found = None
 
 		try:
-			self.findObj = rospy.ServiceProxy('/action_controller/find_object', FindObjects)
-			found = self.findObj().object
+			self.findObjP = rospy.ServiceProxy('/action_controller/find_object', FindObjects)
+			found = self.findObjP().object
 		except rospy.ServiceException, e:
-			rospy.loginfo("Camera failed")
-		
-		return found
+			rospy.loginfo("Camera failed: Not found")
+		finally: 
+			return found
+
+	def findObj(self, obj):
+		obj_list = self.find()
+		print(obj_list)
+		if obj_list != None:
+			for tmp in obj_list:
+				if obj.name.lower() in tmp.lower():
+					return tmp
+		return None
+
+class Arm(object):
+	def __init__(self):
+		#self.pub = rospy.Publisher('/botty/arm/commands', String, queue_size=10)
+		try:
+			rospy.wait_for_service('/botty/arm/commands')
+			self.job = rospy.ServiceProxy('/botty/arm/commands', call)
+			self.stopper = rospy.ServiceProxy('/botty/arm/commands', call)
+
+			rospy.loginfo("Arm initialized")
+		except:
+			rospy.loginfo("Arm failed to initialize")
+			return
+
+	def home(self):
+		param=[]
+		command=call()
+		command.call="home"
+		command.param=param
+		return self.job(command.call, command.param)
+
+		#self.pub.publish("home")
+	def push(self):
+		param=[]
+		command=call()
+		command.call="push"
+		command.param=param
+		return self.job(command.call, command.param)
+
+		#self.pub.publish("push")
 
 class Nav(object):
 	def __init__(self):
+		self.map = [[0, 0, 0, 0],
+			    [0, 0, 0, 0],
+			    [0, 0, 0, 0],
+			    [0, 0, 0, 0],
+			    [0, 0, 0, 0]]
+
+		self.coord = [0,0]
+
+		self.stop = False
 		self.enable_dock = False
-		self.orientation = [0, 1]
+		self.orientation = [1, 0]
 
 		try:
 			rospy.wait_for_service('motor')
@@ -183,6 +230,9 @@ class Nav(object):
 		print(self.dock_client.get_result())
 
 	def cancel(self):
+		self.stop = True
+		self.coord = [0,0]
+		self.orientation = [1,0]
 		if self.enable_dock:
 			self.dock_client.cancel_all_goals()
 		
@@ -192,10 +242,14 @@ class Nav(object):
 		command.param=param
 		self.stopper(command.call, command.param)
 
-	def drive(self, meters):
+	def resume(self):	
+		self.stop = False
+
+	def drive(self, meters, avoid=0):
 		param=[]
 		param.append(meters)
-		#param.append(1)
+		if avoid:
+			param.append(1)
 		command=call()
 		command.call="forwardByMeters"
 		command.param=param
@@ -203,28 +257,22 @@ class Nav(object):
 
 	def turn(self, angle):
 		param=[]
-		param.append(angle)
 		command=call()
 		if angle > 0:
 			command.call="turnRigthByAngle"
 		else:
 			command.call="turnLeftByAngle"
+			angle = 0 - angle
+		param.append(angle)
 		command.param=param
 		return self.job(command.call, command.param)
 	
 	def go_to(self, x, y):
-		maze = [[0, 0, 0, 0],
-			[0, 0, 0, 0],
-			[0, 0, 0, 0],
-			[0, 0, 0, 0],
-			[0, 0, 0, 0]]
 		
-		#coord = self.drive(0)
-		#start = (coord.x, coord.y)
 		end = (x, y)
-		start = (0, 0)
+		start = (self.coord[0], self.coord[1])
 
-		path = astar(maze, start, end)
+		path = astar(self.map, start, end)
 
 		print(path)
 		prev_coord = [0,0]
@@ -233,18 +281,33 @@ class Nav(object):
 		target_orient[1] = path[0][1]
 
 		for coord in path:
-			#print("Coordinates: " + str(coord))
-			#print("Previous: " + str(prev_coord))
-			
+			if self.stop:
+				return self.resume()
+
 			target_orient[0] = coord[0] - prev_coord[0]
 			target_orient[1] = coord[1] - prev_coord[1]
 			prev_coord = coord
 			
-			#print(self.orientation, target_orient)
-			self.turnTo(target_orient)
-			self.drive(0.4)
+			if target_orient == [0,0]:
+				continue
+
+			result = self.turnTo(target_orient)
+			print(result)
+			if result != None or self.stop:			
+				if not result.success or self.stop:
+					return self.resume()
+
+			rospy.sleep(1)
+
+			result = self.drive(0.45)
+			print(result)
+			if not result.success:
+				return self.resume()
 			
-			print("\n")			
+			self.coord = coord
+			rospy.sleep(1)
+			print("\n")
+		return True			
 			
 	def turnTo(self, target_orient):
 		angle = 0
@@ -254,37 +317,24 @@ class Nav(object):
 
 		if target_orient == self.orientation or target_orient == [0,0]:
 			print("No turning")
-			return			
+			return		
 
 		elif add == [0,0]:
 			angle = 180
 		else:
 			if self.orientation == [1,0]:
-				angle = target_orient[1] * 90
+				angle = target_orient[1] * 87
 			elif self.orientation == [0,1]:
-				angle = -target_orient[0] * 90
+				angle = -target_orient[0] * 87
 			elif self.orientation == [-1,0]:
-				angle = -target_orient[1] * 90
+				angle = -target_orient[1] * 87
 			elif self.orientation == [0,-1]:
-				angle = target_orient[0] * 90
-
-		'''elif target_orient[0] == 0:
-			if self.orientation[0] == 0:
-				angle = 180
-			else:
-				angle = (target_orient[1]*self.orientation[0]) * 90
-
-		elif target_orient[1] == 0:
-			if self.orientation[1] == 0:
-				angle = 180
-			else:
-				angle = (target_orient[0]*self.orientation[1]) * 90
-		'''
+				angle = target_orient[0] * 87
 
 		print("Turning: " + str(angle))
 		self.orientation[0] = target_orient[0]
 		self.orientation[1] = target_orient[1]
-		self.turn(angle)
+		return self.turn(angle)
 
 class Controller(object):
 	
@@ -300,22 +350,23 @@ class Controller(object):
 		# initialize node
 		rospy.init_node("control")
 		rospy.on_shutdown(self.shutdown)
-		#rate = rospy.Rate(10)
 
 		# Sound handler
 		self.soundhandle = SoundClient()
 		self.voice = 'voice_kal_diphone'
-		#self.voice = 'voice_nitech_us_rms_arctic_hts'
 		self.volume = 1.0
 
 		# Modules
 		self.cam = Camera()
 		self.nav = Nav()
+		self.arm = Arm()
 
 		# Subscribe to speech commands
 		self.sub = rospy.Subscriber("/botty/speech/commands", Command, self.process_command)
 
 		rospy.loginfo("Controller initialized")
+
+		rospy.sleep(2)
 		self.say("I am Botty McTurtleface")
 
 	def process_command(self, cmd):
@@ -328,9 +379,14 @@ class Controller(object):
 			if cmd.action == Action.GO:
 				self.go(cmd.obj)
 				return
+			if cmd.action == Action.GRAB:
+				self.mutator_thread = Thread(target=self.grab)
+				self.mutator_thread.start()				
+				return
 		if not self.observer_thread.isAlive():
 			if cmd.action == Action.SEARCH:
-				self.observer_thread = Thread(target=self.search, args=(cmd.obj,))
+				#self.observer_thread = Thread(target=self.search, args=(cmd.obj,))
+				self.observer_thread = Thread(target=self.search_at, args=(cmd.obj, int(cmd.obj.attr[0]), int(cmd.obj.attr[1])))
 				self.observer_thread.start()
 				return
 		
@@ -339,12 +395,14 @@ class Controller(object):
 	def stop_all(self):
 		self.say('Canceling actions')
 		self.nav.cancel()
+		self.arm.home()
 		print('Waiting for threads')
 		if self.mutator_thread.isAlive():
 			self.mutator_thread.join()
 		if self.observer_thread.isAlive():
 			self.observer_thread.join()
 		self.say('Stopped all Actions')
+		self.nav.resume()
 
 	def search(self, obj):
 		if obj.name == "all":
@@ -360,13 +418,39 @@ class Controller(object):
 						self.say("Found similar object: " + found)
 				else:
 					self.say("Not found, but found: " + found)
+				return True
 			else: 
 				self.say("Couldn't find object")
-				return
+			return False
 	
+	def search_at(self, obj, x, y):
+		self.say("Going to Position " + str(x) + ", " + str(y))
+		if not self.nav.go_to(x, y):
+			return
+		#if not self.nav.drive(x, 1):
+		#	return
+		#if not self.nav.turn(90):
+		#	return
+		#if not self.nav.drive(y, 1):
+		#	return
+
+		self.say("Searching for " + obj.name)
+		for x in range(4):
+			rospy.sleep(0.5)
+			tmp = self.cam.findObj(obj)
+			rospy.sleep(0.5)
+			if tmp != None:
+				self.say("I found: " + tmp)				
+				return
+			
+			elif not self.nav.turn(87):
+				return
+
+		self.say("I didn't find " + obj.name)
+
 	def go(self, obj):	
 		if obj.name == "forward": 
-			self.mutator_thread = Thread(target=self.nav.drive, args=(0.4,))
+			self.mutator_thread = Thread(target=self.nav.drive, args=(2,1,))
 		elif obj.name == "right": 
 			self.mutator_thread = Thread(target=self.nav.turn, args=(90,))
 		elif obj.name == "left": 
@@ -381,6 +465,12 @@ class Controller(object):
 		
 		self.say('Moving ' + obj.name + " ...")
 		self.mutator_thread.start()
+
+	def grab(self):
+		self.say("Grabbing object")
+		self.arm.push()
+		self.say("oops")
+		self.arm.home()
 
 	def say(self, txt):
 		print('Saying: %s' % txt)

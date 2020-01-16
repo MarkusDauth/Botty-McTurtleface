@@ -112,6 +112,7 @@ bool getObject(camera::FindObjects::Request &req, camera::FindObjects::Response 
 	map_object_id_to_string(object_ids, objects_as_string); 
 	remove_duplicates(objects_as_string);
 	res.object = objects_as_string;
+	return true;
 	}
 	else 
 	return false;
