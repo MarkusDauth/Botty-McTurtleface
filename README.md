@@ -1,46 +1,65 @@
 # TODO
-Notizen:
-Was nicht machen?
+Es gibt eine "Main-Readme" (dieses Dokument) und in jedem unserer Packages (arm, camera, lidar, speech, controller) jeweils eine "Sub-Readme"
 
-Lessons Learned:
-Probleme mit Hardware (Treiber) historische Einführung
+Was noch in der Doku erklärt werden muss:
+* Was muss alles installiert werden? Eine große Installations anleitung in der Haupt Readme
+* Alle benötigten Packages müssen nochmal 
+* Wo stehen Angaben zu Version, Datum und Author?
+* Wie kompiliert unser Projekt?
+* Wie sieht die korrekte Ordnerstruktur aus
+* Botty feste IP Adresse (10.0.189.60)
 
-Release Bereich
+Was noch im Code erledigt werden muss:
+* Author, Datum und Version an ansprechenden stellen anpassen
+* Code muss Dokumentiert werden + Refactoring
+* NIcht benutztn Code auskommentieren?
 
-Git verlinken
+Geplante Struktur der Main-Readme
+* Einleitung (z.B. Projektziel, wie liest man dieses Dokument?)
+* Architektur
+* Installation (Alle Installationen und Konfigurationen aufgeteilt nach den Botty-Packages auflisten)
+* Demos (hier erklären, welche Demos ausgeführt werden können, z.B. "finde Blume an X,Y", Raster erklären)
+* Aufgetretene Probleme (z.B. Stromprobleme, Lieferung, Kamera wurde umgebaut, Feste IP, Mikrofon und Lautsprecher)
 
-Was TODO für die nächsten (Empfehlungen)
-Akku nachbestellen
-Winkel beim Drehen besser
-Weichere Bewegungsansteuerung
-Umgehung von Hinternissen (A*) ist nicht implementiert
-Kamera Arkennung
-“Bewege dich auf Kachel 2,2)
+Folgende Demos gibt es und sollten unter der Überschrift (Demos) gemacht werden:
+- AN Koordinat fahren
+- finde ObjektX an Koord X,Y
+- Finde Objekt (Was siehst du)
 
-Abnahmekriterien laut Scrum
-Product Owner kann Demo nachbauen und verstehen
-Was muss installiert werden?
-Was muss konfiguriert werden?
-Systemumgebung nachbauen mit Hallo Welt
-Verschiedene Module sollen Implementierung nachvollziehen (z.B. andere Schallwerte, neues Objekt erkennen, neue Vokabeln bei Lexikon,  neue Posen für Arm
-Architektur Schaubild
+Grundstruktur der Sub-Readmes (Template):
+* Einleitung (Was soll wie gemacht werden? kurz die Funktionsweise erklären, Hardware kurz eklären, Links für Hardware)
+* Verwendete Packages (Auflisten, Links, erklären und benutzt Tutorials verlinken)
+* Dateien (Alle selbst geschriebenen Dateien erklären, aber nicht auf Code eingehen)
+* Konfiguration (z.B. neue Bilder für die Kaemera trainieren, neue Posen für den Arm)
+* Lessons Learned (Expereminte, die nicht funktioniert haben)
+* Potenzielle Verbesserungen (hier erklären, was nachfolger noch machen könnte oder was besser sein kann)
 
-Kein Glossar oder Literaturverzeichnis
-Trello aufräumen
-Projektziel
-Angeben wie man Doku liest: (z.B: KApitel 1,2 und 3 linear, die anderen nicht)
-
-Nicht erklären was der Roboter ist, sondern nur was gemacht wurde.
-Experimente (z.B. Frameworks die nicht funktioniert haben) nachvollziehber dokumentieren
+Liste an Potenziellen Verbesserungen:
+* Akku nachbestellen
+* Winkel beim Drehen besser
+* Weichere Bewegungsansteuerung
+* Umgehung von Hinternissen, (A*) ist nicht implementiert im MOtor
+* Bessere Kamera Erkennung
+* Neue Befehle z.B. “Bewege dich auf Kachel 2,2"
 
 
-# Botty-McTurtleface main Package
+Was berücksicht werden sollte:
+- Kein Glossar oder Literaturverzeichnis
+- Trello aufräumen
+- Nicht erklären was der Roboter ist, sondern nur was gemacht wurde. Entsprechende Webseiten verlinken
+
+Ab hier beginnt unsere Doku:
+
+# Einleitung
 
 Dieses ROS-Package dient zur Steuerung des Turtlebot2 mit folgenden Komponenten:
 - PhantomX Reactor Arm
 - Hokuyo URG-04LX-UG01 (Lidar)
 - Orbbec Astra (RD-Kamera)
-- NUC
+- NUC mit Ubuntu 16.04 LTS
+- Kobuki Base
+- Lautsprecher (mifa)
+- Mikrofon (Docooler)
 
 Das Botty-Package ist nochmal in mehrere Subpackages aufgeteilt.
 - arm
@@ -48,6 +67,9 @@ Das Botty-Package ist nochmal in mehrere Subpackages aufgeteilt.
 - lidar
 - speech
 - controller
+- motor
+
+Jeder dieser Packages hat wiederum eine eigene ReadMe-Datei, welche die Details der einzelnen Packages erklärt.
 
 # Installation
 
