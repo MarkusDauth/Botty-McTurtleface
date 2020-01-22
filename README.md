@@ -13,7 +13,7 @@ Was noch im Code erledigt werden muss:
 * Code muss Dokumentiert werden + Refactoring
 * NIcht benutztn Code auskommentieren?
 
-Geplante Struktur der Main-Readme
+Geplante Struktur der Main-Readme, sprich Überschriften
 * Einleitung (z.B. Projektziel, wie liest man dieses Dokument?)
 * Architektur
 * Installation (Alle Installationen und Konfigurationen aufgeteilt nach den Botty-Packages auflisten)
@@ -25,7 +25,7 @@ Folgende Demos gibt es und sollten unter der Überschrift (Demos) gemacht werden
 - finde ObjektX an Koord X,Y
 - Finde Objekt (Was siehst du)
 
-Grundstruktur der Sub-Readmes (Template):
+Grundstruktur der Sub-Readmes, sprich Überschriten (Template):
 * Einleitung (Was soll wie gemacht werden? kurz die Funktionsweise erklären, Hardware kurz eklären, Links für Hardware)
 * Verwendete Packages (Auflisten, Links, erklären und benutzt Tutorials verlinken)
 * Dateien (Alle selbst geschriebenen Dateien erklären, aber nicht auf Code eingehen)
@@ -46,6 +46,7 @@ Was berücksicht werden sollte:
 - Kein Glossar oder Literaturverzeichnis
 - Trello aufräumen
 - Nicht erklären was der Roboter ist, sondern nur was gemacht wurde. Entsprechende Webseiten verlinken
+- Trello aufräumen
 
 Ab hier beginnt unsere Doku:
 
