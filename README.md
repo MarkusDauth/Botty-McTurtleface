@@ -3,7 +3,6 @@ Es gibt eine "Main-Readme" (dieses Dokument) und in jedem unserer Packages (arm,
 
 Was noch in der Doku erklärt werden muss:
 * Was muss alles installiert werden? Eine große Installations anleitung in der Haupt Readme
-* Alle benötigten Packages müssen nochmal 
 * Wo stehen Angaben zu Version, Datum und Author?
 * Wie kompiliert unser Projekt?
 * Wie sieht die korrekte Ordnerstruktur aus
