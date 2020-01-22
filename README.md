@@ -1,3 +1,39 @@
+# TODO
+Notizen:
+Was nicht machen?
+
+Lessons Learned:
+Probleme mit Hardware (Treiber) historische Einführung
+
+Release Bereich
+
+Git verlinken
+
+Was TODO für die nächsten (Empfehlungen)
+Akku nachbestellen
+Winkel beim Drehen besser
+Weichere Bewegungsansteuerung
+Umgehung von Hinternissen (A*) ist nicht implementiert
+Kamera Arkennung
+“Bewege dich auf Kachel 2,2)
+
+Abnahmekriterien laut Scrum
+Product Owner kann Demo nachbauen und verstehen
+Was muss installiert werden?
+Was muss konfiguriert werden?
+Systemumgebung nachbauen mit Hallo Welt
+Verschiedene Module sollen Implementierung nachvollziehen (z.B. andere Schallwerte, neues Objekt erkennen, neue Vokabeln bei Lexikon,  neue Posen für Arm
+Architektur Schaubild
+
+Kein Glossar oder Literaturverzeichnis
+Trello aufräumen
+Projektziel
+Angeben wie man Doku liest: (z.B: KApitel 1,2 und 3 linear, die anderen nicht)
+
+Nicht erklären was der Roboter ist, sondern nur was gemacht wurde.
+Experimente (z.B. Frameworks die nicht funktioniert haben) nachvollziehber dokumentieren
+
+
 # Botty-McTurtleface main Package
 
 Dieses ROS-Package dient zur Steuerung des Turtlebot2 mit folgenden Komponenten:
