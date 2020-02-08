@@ -51,6 +51,7 @@ Was berücksicht werden sollte:
 Ab hier beginnt unsere Doku:
 
 # Einleitung
+Dieses Repository stellt das Ergebnis des Studienprojekt "Raumerfassung und Sprachsteuerung für einen teilautonomen Roboter" im Wintersemester 2019/20 an der Hochschule Kaiserslautern, Standort Zweibrücken, dar. Unter der Leitung von Prof. Adrian Müller wurder der TurtleBot 2 von Markus Dauth, David Kostka, Felix Mayer und Raschied Slet programmiert. Ziel war es, einen TurtleBot 2 mittels Sprachbefehlen in einem Pick-And-Place-Szenario zu steuern.
 
 Dieses ROS-Package dient zur Steuerung des Turtlebot2 mit folgenden Komponenten:
 - PhantomX Reactor Arm
@@ -72,6 +73,7 @@ Das Botty-Package ist nochmal in mehrere Subpackages aufgeteilt.
 Jeder dieser Packages hat wiederum eine eigene ReadMe-Datei, welche die Details der einzelnen Packages erklärt.
 
 # Installation
+## Allgemein
 
 Dieses Repository dient als eigenes ROS-Package und muss daher in den src Ordner des Catkin_Workspaces geklont werden. Es müssen mehrere Programme über apt-get installiert werden und Git-Repositories in den src Ordner des 
 
