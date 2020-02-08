@@ -1,8 +1,34 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#this document is made within a study project of the 'Hochschule Kaiserslautern'
-#made by Felix Mayer
-#version 1.0
+
+'''
+Author: Felix Mayer
+Date: 8.2.19
+
+Description:
+Lidar/Hokuyo interface for botty
+
+Ros Implementation:
+Service and Message
+
+This scripts performs an interpretation of steadily scans of the environment to messure the distance to other physical objects.
+The prmary task is it to check that the the minimum distance to an obstacle is not undershot. 
+The secondary task is it to group all the reconized hints into 3 groups (left,front,rigth) for a more comfortable use.
+
+The lidar can be used in 2 diffrent ways: 
+1st: with a callback function which will always take care about the data of the node. For this make use of the message defintion
+2nd: it will also work on command, if it will be a to big performance issue to receive always it's data every single time. For this make use of the service
+
+NOTICE: 
+If u want to adjust the messurement values, for example the minimum distance, check out the config.xml. 
+Once u changed the values inside there the node will adopt them after a restart.
+Everything u can change is described in the config.xml
+
+Additional Notes:
+If u changed the code or made process on it in other ways, feel free to add ur name to the authors rigth next to me. I have kept a nice place free for u (:
+Also feel free to overwork the description if necessary.
+
+'''
 
 import rospy
 from xml.dom.minidom import *

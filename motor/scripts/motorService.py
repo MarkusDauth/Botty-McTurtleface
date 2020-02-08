@@ -1,5 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+'''
+Author: Felix Mayer
+Date: 8.2.19
+
+Description:
+Motor interface for botty
+
+Ros Implementation:
+Service
+
+This scripts performs movement based actions on command.
+The prmary Task is it to move in differents variants. The following options are possable:
+- move forward
+- turn left
+- turn rigth
+- stop on interrupt
+
+By default the Controller will take care about the communication with the motor. But optionaly the motor itself will communicate with the lidar.
+
+Additional Notes:
+If u changed the code or made process on it in other ways, feel free to add ur name to the authors rigth next to me. I have kept a nice place free for u (:
+Also feel free to overwork the description if necessary.
+
+'''
+
 import rospy
 from geometry_msgs.msg import Twist
 from motor.srv import call,callResponse
@@ -52,6 +78,7 @@ def setSpeed(speedLocal):
         speed=speedLocal
 
 def forwardByMeter(meter,hokuyo=False):
+    #starts the process to move forward
     global abweichung
     global speed
     global pub
@@ -79,6 +106,12 @@ def forwardByMeter(meter,hokuyo=False):
     #Loop to move the turtle in an specified distance
     while((drivenTime < endTime) and not (rospy.is_shutdown() or interrupt)):
         timeNow=rospy.Time.now().to_sec()
+
+        #NOTICE: if hokuyo is true or in other words the values of the lidar shoud be checked to evade hints, then it will evade reflex-based. 
+        #        this means it is actually a 'Reflex-Based Agent'
+        #        if false, just skip that part to line 227 with: "# >>>>>>..." 
+        #        there actually exists a A*-Search algorithm within the controller as alternative
+
         if hokuyo:
             response=checkHints()
             #Wenn kein Hindernis, dann fahre
@@ -216,12 +249,15 @@ def forwardByMeter(meter,hokuyo=False):
                     pub.publish(twistToStopp)
                     sleep(0.2)
                     break
+
+        # >>>>>> the simple default case. Dont checks the environment and just drive forward
         else:        
             #Publish the velocity
             pub.publish(vel_msg)
             #Takes actual time to velocity calculus
             timeLater=rospy.Time.now().to_sec()
             drivenTime+=timeLater-timeNow
+
     #After the loop, stops the robot
     vel_msg.linear.x = 0
     #Force the robot to stop
@@ -280,6 +316,7 @@ def calculateTurnTwist(angle):
     return twist
 
 def turnLeftByAngle(angle,speedLocal=None):
+    #starts creating the necessary twist to turn
     global view
     setSpeed(speedLocal)
     tunrTwist= calculateTurnTwist(angle)
@@ -289,6 +326,7 @@ def turnLeftByAngle(angle,speedLocal=None):
     view-=angle
 
 def turnRigthByAngle(angle,speedLocal=None):
+    #starts creating the necessary twist to turn
     global view
     setSpeed(speedLocal)
     turnTwist = calculateTurnTwist(angle)
@@ -298,6 +336,7 @@ def turnRigthByAngle(angle,speedLocal=None):
     view+=angle
 
 def moveTwist(twist,angle):
+    #starts turning with the given twist
     global speed
     global pub
     global wAbw
@@ -338,6 +377,8 @@ def stopp():
 
 def decode(command):
     #check wich command u received and check if it's parameters are correct
+    #'call' defines the function name
+    #'param' defines the given parameters as integers (boolean are representable by 0 and 1)
     global xCoord
     global yCoord
     done=False
@@ -387,7 +428,7 @@ def decode(command):
     if command.call=="stopp":
         if len(command.param)==0:
             rospy.loginfo("Call: stopp()")
-	    stopp()
+            stopp()
         else:
             rospy.logdebug("Call: stopp; Error: Wrong amount of Parameters! stopp takes 0 parameters")
         done=True

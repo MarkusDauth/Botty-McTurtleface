@@ -1,7 +1,48 @@
 <!--
-this document is made within a study project of the 'Hochschule Kaiserslautern'
-made by Felix Mayer
-version 1.0
+Author: Felix Mayer
+Date: 8.2.19
+
+Description:
+Configuration informations for the lidar.
+
+This xml saves the properties for the lidar.
+
+There are at total 3 angles-areas. Left, Front and Rigth. (all in degrees)
+'start' defines the Startpoint of the angle-area.
+'end' defines the Endpoint of the angle-area
+'sites' defines how big the sites of the angle-areas are defined. This sites are orientated on the full length from start to end. if sites>0 the minimal distance is reduced incrementiell to the site ends.
+Example:
+By default the front angle should be defined like that:  <angle start="30" end="210" site="0">front</angle>. If we represent Botty now with a 'B', and a simple '.' shows the limit of the minimal distance it will look like that:
+
+           .....
+        ...     ...
+      ..           ..
+    ..               ..
+   .                   .
+  .                     .
+ .           B           .
+
+Everything between this dots and Botty will be reconiced as to near or in other words as an hint. It's actually the front view and still he can see to the sites. But if u make its view to small, it coud actually oversee something. The 'site' param will fix booth for us. We make the following adjustment: <angle start="30" end="210" site="45">front</angle>
+
+           .....
+        ...     ...
+      ..           ..
+      ..           ..
+        .         .
+         .       .
+          .  B  .
+
+The total view range is still the same from 30 to 210. But on both sites of the view it will short down the minimal distance. The more u get to the start- or endpoint the minimal distance is getting smaller.
+Alternatively just start the code and check it's results by pasting 'rostopic echo /botty/hokuyoInterpreter'
+
+The other properties are:
+- collision (in cm): the minimal distance
+-callibration (in meter): the distance value for the first callibration on start. Nothing shoud be within this range at start!
+-constantSecureRange (in cm): is getting added to the minimal distance. The parameter 'site' can't reduce this length, that means there will be always a minimum length as minimal distance equal to constantSecureRange.
+
+Additional Notes:
+If u changed the code or made process on it in other ways, feel free to add ur name to the authors rigth next to me. I have kept a nice place free for u (:
+Also feel free to overwork the description if necessary.
 -->
 
 <configs>
@@ -15,7 +56,7 @@ version 1.0
         <angle start="30" end="210" site="45">front</angle>
     </angles>
     <!-- if a hint is bellow this range while using the front angle, this node is sending a massege to stop the motors-->
-    <collision range="30"/> <!-- wird von 'site' der Winkeln dynamisch verringert-->
-    <callibration range="0.25"/> <!-- Abstand der bei der Kallibirierung als 'toter Winkel' betrachtet wird -->
-    <constantSecureRange range="5"/> <!-- Sicherheitsabstand der im gegensatz zu 'collision' nicht von 'site' beeinflusst wird-->
+    <collision range="30"/> <!-- is getting dynamcliy reduced by 'site'-->
+    <callibration range="0.25"/> <!-- Everything below this distance will be interpreted after callibration as an 'dead-angle' -->
+    <constantSecureRange range="5"/> <!-- a minimum of distance which wont be reduced by 'site'-->
 </configs>
