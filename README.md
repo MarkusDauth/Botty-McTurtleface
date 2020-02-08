@@ -96,7 +96,7 @@ git clone https://github.com/RobotnikAutomation/phantomx_reactor_arm.git
 ```
 
 ## Lidar
-Im Ordner “src” des Workspace dieses Repository downloaden bzw. folgenden Instruktionen folgen:
+Im Ordner “src” des Workspace dieses Repository downloaden bzw. folgenden Instruktionen in der gegebenen Reihenfolge folgen:
 ```
 git clone https://github.com/ros-drivers/driver_common.git
 cd ..
@@ -107,8 +107,12 @@ cd ..
 catkin_make
 ```
 
-Troubleshooting: Es ist wichtig driver_common VORHER zu kompilieren, 
+Troubleshooting: 
+Es ist wichtig driver_common VORHER zu kompilieren, 
 bevor hokuyo_node hinzugefügt wird. Sonst scheitert der Prozess!
+
+## Motor
+Keine weitere Pakete benötigt.
 
 ## Speech
 Falls 'pip' nicht installiert ist:
@@ -173,11 +177,18 @@ rosrun botty pose_command.py
 ```
 
 ## Lidar
-In einem Terminal folgende Instruktionen folgen:
+Zunächst muss der Hokuyo gestartet werden:
+```
+rosrun hokuyo_node hokuyo_node
+```
+Danach der hokuyoInterpreter:
+```
+rosrun lidar hokuyoInterpreter.py
+```
+Troubleshooting: 
+Falls der Hokuyo nicht gefunden wird, folgendes zuvor ausführen, damit der passende Port angesprochen wird
 ```
 sudo chmod a+rw /dev/ttyACM0
-rosrun hokuyo_node hokuyo_node
-rosrun lidar hokuyoInterpreter.py
 ```
 
 ## MotorService
