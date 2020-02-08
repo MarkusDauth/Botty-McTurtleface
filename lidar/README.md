@@ -28,7 +28,9 @@ Während das eigene Packgae eine Auswertung der Daten vornimmt, liefert das 'Hok
 Genauere Infos unter:
 
 https://github.com/ros-drivers/driver_common.git
+
 http://wiki.ros.org/hokuyo_node
+
 https://idorobotics.com/2018/11/02/integrating-the-hokuyo-urg-lidar-with-ros
 
 # Dateien
