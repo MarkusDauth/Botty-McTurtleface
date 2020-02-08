@@ -1,14 +1,15 @@
 # Einleitung
 
-Dieses ROS-Package dient zur Steuerung des Lidar des Turtlebot.
-
 ## Ziel
+
+Dieses ROS-Package dient zur Steuerung des Lidar des Turtlebot.
 
 Ziel war es eine Auswertung der Lidar Werte vorzunehmen, um die Umgebung auf Hindernisse überprüfen zu könne.
 
 ## Funktionsweise
 
 Dortzu wird zunächst definiert, ab welcher Entfernung ein Objekt als Hindernis betrachtet wird. Zusätzlich werden alle erkannten Hindernisse in drei Richtungsgruppen sortiert - Links,Rechts und Vorne. Diese Ergebniswerte können entweder auf Anfrage (ROS-Service) oder durch ständige Benachrichtigung (ROS-Message) erhalten werden. Das Ergebnis besteht aus mehreren Listen. Für jede Richtungsgruppe gibt es eine Liste, gefüllt mit Gradzahlen, die die exakte Positionierung des Hindernis wiederspiegelt, als auch eine Liste mit den Distanzen (in cm) zu den jeweiligen Hindernissen. Zu beachten ist, dass die Zugehörigkeit der Gradzahlen zu den Distanzen durch die identische Indexstelle gegeben ist. 
+
 D.h. wenn an Stelle 7 der Gradzahl-Liste für links ein Hindernis hinterliegt ist, ist die zugehörige Distanz ebenso an der Stelle 7 in der Distanz-Liste für links hinterlegt.
 
 ## Hardware
@@ -51,6 +52,7 @@ Jegliche Konfigurationen werden in der namensgebenden 'config.xml' vorgenommen. 
 # Lessons Learned
 
 Wird ein Hindernis erkannt, ist zunächst unklar in welcher Gradrichtung es sich überhaupt befindet, weshalb das zuerst berechnet werden muss. Die Praxis hat gezeigt, dass die Berechnung der entsprechenden Gradzahl nicht zu einfach ist, da der Hokuyo mehrere Messwerte für allein eine Gradzahl anfertigt. D.h. auch wenn der Hokuyo einen Messbereich von 240° hat, werden nicht 240 Ergebnisse geliefert (im Test waren es 512). Der Algorithmus wurde soweit angepasst, dass er unabhängig zu den insgesamt gemessenen Werten eine Zuordnung zu Gradzahlen vornehmen kann, vorausgesetzt die Messungen finden in gleichmäßigen Abständen fest. 
+
 Desweiteren sollte unbedingt bei Start darauf geachtet werden, dass nicht mehrere Kabel vom Turtlebot die Sicht des Lidar versperren, weil allein die Kallibrierungs-Phase, dann nahezu alles als Totenwinkel erklären wird.
 
 # Potenzielle Verbesserungen
