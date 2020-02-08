@@ -2,7 +2,7 @@
 
 Dieses ROS-Package dient zur Steuerung des Lidar des Turtlebot.
 
-##Ziel
+## Ziel
 
 Ziel war es eine Auswertung der Lidar Werte vorzunehmen, um die Umgebung auf Hindernisse überprüfen zu könne.
 
@@ -17,9 +17,10 @@ Das Lidar ist ein Hokuyo URG-04LX-UG01.
 Lidar bedeudet es ist ein Laserscanner zur Berchnung von Distanzen auf einer horizontalen Ebene. Der Wahrnehmungwinkel beträgt 240° und die Wahrnehmungsreichweite bis ca. 4 meter.
 
 Genauere Spezifikationen unter:
+
 https://www.hokuyo-aut.jp/search/single.php?serial=166
 
-##Verwendete Packages
+## Verwendete Packages
 
 Während das eigene Packgae eine Auswertung der Daten vornimmt, liefert das 'Hokuyo Node' package die benötigten Daten. Dazu ist ebenso das Package 'Driver Common' notwenidig, da 'Hokuyo Node' allein nicht auf ROS-Kinetic lauffähig ist.
 
@@ -29,29 +30,30 @@ https://github.com/ros-drivers/driver_common.git
 http://wiki.ros.org/hokuyo_node
 https://idorobotics.com/2018/11/02/integrating-the-hokuyo-urg-lidar-with-ros
 
-#Dateien
+# Dateien
 
-##hokuyoInterpreter.py
+## hokuyoInterpreter.py
 
 Nimmt eine Auswertung der Daten des Lidars vor und erfüllt die oben beschriebenen Funktionsweisen.
 
-##config.xml
+## config.xml
 
 Beinhaltet die Konfigurations Daten, die für hokuyoInterpreter benötigt werden.
 
-##msg/Hints.msg und srv/HintsService.srv
+## msg/Hints.msg und srv/HintsService.srv
 
 Stellen die für ROS notwendigen Message bzw. Service Definitions dar.
 
-#Konfiguration
+# Konfiguration
 
 Jegliche Konfigurationen werden in der namensgebenden 'config.xml' vorgenommen. Diese können direkt hier geändert werden ohne dass der Code selbs geändert werden muss.
 
-#Lessons Learned
+# Lessons Learned
+
 Wird ein Hindernis erkannt, ist zunächst unklar in welcher Gradrichtung es sich überhaupt befindet, weshalb das zuerst berechnet werden muss. Die Praxis hat gezeigt, dass die Berechnung der entsprechenden Gradzahl nicht zu einfach ist, da der Hokuyo mehrere Messwerte für allein eine Gradzahl anfertigt. D.h. auch wenn der Hokuyo einen Messbereich von 240° hat, werden nicht 240 Ergebnisse geliefert (im Test waren es 512). Der Algorithmus wurde soweit angepasst, dass er unabhängig zu den insgesamt gemessenen Werten eine Zuordnung zu Gradzahlen vornehmen kann, vorausgesetzt die Messungen finden in gleichmäßigen Abständen fest. 
 Desweiteren sollte unbedingt bei Start darauf geachtet werden, dass nicht mehrere Kabel vom Turtlebot die Sicht des Lidar versperren, weil allein die Kallibrierungs-Phase, dann nahezu alles als Totenwinkel erklären wird.
 
-#Potenzielle Verbesserungen
+# Potenzielle Verbesserungen
 
 Von Interesse wäre eine Kartenerstellung mit dem Lidar. Dies könnte auch unabhängig von dem derzeitigen Code erfolgen. ROS stellt hierfür bereits diverse Tools zur Verfügung, aber bei Tests hat sich gezeigt, dass viele dieser Tools nicht mit Turtlebot 2 kompatibel sind. Wenn keine passende Alternative gefunden werden würde, müsste die Kartenerstellung komplett manuell gemacht werden. Insofern das keine zu große Aufgabe für ein Studienprojekt darstellt, könnten als Anfang Änderungen am hokuyoInterpreter vorgenommen werden, damit dieser zusätzlich zu der derzeitigen Hindernis Erkennung ungeachtet der Erkennung eines Hindernis alle Messwerte hinterlegt. Schließlich kann er bereits eine Zuordnung der Messwerten zu Gradzahlen zusammen mit der jeweiligen Entfernung vornehmen.
 
