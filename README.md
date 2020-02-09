@@ -105,7 +105,7 @@ TODO David: bau hier das Schaubild über die Komponenten ein. Eventuell dieses K
 # Installation
 Im Folgenden werden alle notwendigen Schritte aufgelistet, um dieses ROS-Package (botty) mit allen erforderlichen Abhängigkeiten zu installieren.
 
-Dieses Repository dient als eigenes ROS-Package und muss daher in den "src" Ordner des Catkin-Workspaces geklont werden. Zur Installation müssen mehrere Programme über apt-get installiert werden und zusätzliche Git-Repositories in den "src" Ordner des Catkin-Workspaces geklont werden.
+Dieses Repository dient als eigenes ROS-Package. Zur Installation müssen mehrere Programme über apt-get installiert werden und zusätzliche Git-Repositories in den "src" Ordner des Catkin-Workspaces geklont werden.
 
 ## Vorbereitung
 Vor der Installation sollte Folgendes ausgeführt werden:
@@ -118,7 +118,7 @@ sudo apt-get install ros-kinetic-catkin python-catkin-tools
 
 Klonen des botty-Packages in den Ordner “src” des Workspace:
 ```
-git clone https://github.com/RobotnikAutomation/phantomx_reactor_arm.git
+git clone https://github.com/MarkusDauth/botty
 ```
 
 ## PhantomX Reactor Arm
@@ -176,7 +176,7 @@ catkin_make
 rosdep install sound_play
 ```
 
-## Package
+## Botty-Package
 Vor der erstmaligen ausführen von Programmen muss das Botty-Package kompiliert werden. Folgenden Befehl im catkin_ws Ordner ausführen:
 ```
 cd ~/catkin_ws
