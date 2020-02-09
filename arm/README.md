@@ -70,9 +70,11 @@ Es könnte ein USB2Dynamixel gekauft werden, welcher eventuell eine Steuerung de
 
 Eine Alternative für den PhantomX Reactor wäre der WidowX Arm:
 https://learn.trossenrobotics.com/projects/186-widowx-arm-with-ros-getting-started-guide.html
-Für diesen Arm gibt es mehr Dokumentationen und Hilfestellungen online. Er lässt sich außerdem mit dem MoveIt-Package von Haus aus steuern. Siehe:
-https://github.com/Interbotix/widowx_arm
+
+Für diesen Arm gibt es mehr Dokumentationen und Hilfestellungen online. Er lässt sich außerdem mit dem MoveIt-Package von Haus aus steuern.
+Siehe: https://github.com/Interbotix/widowx_arm
 
 # Autoren
 Markus Dauth - Ursprüngliche Arbeiten
+
 David Kostka - Implementierung der Posen als ROS-Service
