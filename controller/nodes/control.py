@@ -137,7 +137,7 @@ def astar(maze, start, end):
 class Camera(object):
 	def __init__(self):
 		try: 
-			rospy.wait_for_service('/action_controller/find_object')
+			rospy.wait_for_service('/camera_controller/find_object')
 			rospy.loginfo("Camera initialized")
 		except:
 			rospy.loginfo("Camera failed to initialize")
@@ -146,7 +146,7 @@ class Camera(object):
 		found = None
 
 		try:
-			self.findObjP = rospy.ServiceProxy('/action_controller/find_object', FindObjects)
+			self.findObjP = rospy.ServiceProxy('/camera_controller/find_object', FindObjects)
 			found = self.findObjP().object
 		except rospy.ServiceException, e:
 			rospy.loginfo("Camera failed: Not found")
