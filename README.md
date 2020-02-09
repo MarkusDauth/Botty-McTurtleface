@@ -187,7 +187,7 @@ catkin build (falls eine Fehlermeldung kommt, kann man diesen Befehl ignorieren)
 catkin_make  
 ```
 
-# Starten der Demos
+# Starten der Komponenten und Demos
 Im Folgenden wird erläutert, wie man die Funktionalitäten des Botty-Packages ausführt. Für jede Hardware-Komponente müssen Befehle ausgeführt werden, um deren ROS-Nodes zu starten.
 Um eine bessere Übersicht über den aktuellen Status der einzelnen Komponenten (und eventuelles Debugging) zu erhalten, wird empfohlen, dass die jeweiligen Skripte in einzelnen Konsolen (Terminals) ausgeführt werden.
 
