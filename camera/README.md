@@ -44,10 +44,19 @@ Es wird eine Liste von Strings mit den erkannten Objekten an den aufrufenden zur
 
 - In diesem Ordner werden die antrainierten Objekte im .png format gespeichert.
 
+Es wurden folgende Objekte antrainiert:
+
+- Cola Flasche
+- Roter Pfeil
+- Kreideschachtel
+- Blume
+- Zeitschrift
+
+
 ### Ordner auswertung:
 
 - In diesem Ordner findet sich in Form einer Konfusionsmatrix eine Auswertung, bei der es darum geht, wie gut die Bilderkennung funktioniert.
-Im Ordner befindet sich die Auswertung im .html und .xlsx Format im Ordner.
+Im Ordner befindet sich die Auswertung im .pdf und .xlsx Format im Ordner.
 
 # Konfiguration
 
