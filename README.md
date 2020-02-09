@@ -83,6 +83,24 @@ Folgende Funktionalitäten wurden in diesem Projekt realisiert:
 - Beim Vorwährtsfahren ist Botty in der Lage Objekte zu umfahren. Die Logik hierfür und alle weiteren Befehle zum Fahren befindet sich im Subpackage "motor".
 
 # Architektur
+![Architektur](documents/architecture.jpg)
+Das System ist Funktional in mehere Module aufgeteilt, welche den Subpackages entsprechen:
+- Arm
+- Camera
+- Controller
+- Lidar
+- Motor
+- Speech
+Ein Modul beinhaltet Nodes, die zur erreichung der Funktionalität, miteinander durch Topics/Services kommunizieren.
+Außer Driver-Nodes können dank ROS auch Nodes auf andere Maschinen ausgelagert werden, 
+solange sie sich im ROS-Network befinden. (z.B. zur Visualisierung, Debugging)
+Jedes dieser Module ist von einander gekapselt, die einzige Kommunikation findet per Schnittstelle durch den Controller statt.
+Somit kann die Arbeitsweise von ROS im "Blackboard-Prinzip" strukturierter werden, was die Komplexität reduziert. 
+
+Der Controller ist die zentrale Kontrolleinheit des Systems.
+Dort werden Befehle verwaltet, geplant und auf die Module verteilt, es wird also die Zusammenarbeit der Module koordiniert.
+Mehr dazu im Subpackage Controller.
+
 ## Hardware
 Botty McTurtleFace t besitzt folgendene Hardware-Komponenten:
 - [PhantomX Reactor Arm (mit Wrist)](https://www.roscomponents.com/en/robotic-arms/100-phantomx-reactor.html#/montaje_widowx-yes/reactor_wrist_rotate-yes)
