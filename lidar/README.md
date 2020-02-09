@@ -45,10 +45,15 @@ Prinzipell gibt es drei Richtungsgruppen (Links, Rechst, Vorne), die durch Start
 Die derzeitigen im Projekt vorgenommenen Konfigurationen lauten:
 
 Rechts:			start=1 end=60 site=0
+
 Links:			start=180 end=240 site=0
+
 Vorne:			start=30 end=210 site=45
+
 collision:		range=30
+
 callibration:		range=0.25
+
 constantSecureRange: 	range=5
 
 # Lessons Learned
