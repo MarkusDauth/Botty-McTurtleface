@@ -91,6 +91,7 @@ Das System ist Funktional in mehere Module aufgeteilt, welche den Subpackages en
 - Lidar
 - Motor
 - Speech  
+
 Ein Modul beinhaltet Nodes, die zur erreichung der Funktionalität, miteinander durch Topics/Services kommunizieren.  
 Außer Driver-Nodes können dank ROS auch Nodes auf andere Maschinen ausgelagert werden,   
 solange sie sich im ROS-Network befinden. (z.B. zur Visualisierung, Debugging)  
@@ -280,6 +281,30 @@ TODO Raschied, David, Felix: hier kurz alle ausführbaren Codes eurer Packages a
 
 Das Botty-Package bietet mehrere ausführbare Programme an. Für jedes dieser Programme, sollten die entsprechenden Komponenten aus dem vorherhigen Kapitel gestartet werden.
 
+### Navigation
+#### Sprachbefehle
+"go forward/back/left/right"  
+Botty fährt 1 Meter vorwärts/rückwärts bzw. dreht sich um 90 Grad nach rechts/links  
+
+"go to the docking station"  
+Botty versucht auf die Docking-Station (Ladestation) zu fahren.  
+
+"grab the object"  
+Botty "greift" was vor ihm liegt.  
+
+#### Controller Kommandos
+Mit `rostopic pub /botty/speech/commands` kann eine Command-Message an den Controller gesendet werden.
+Die Message muss gefüllt werden mit:
+1. der Action-ID (z.B. "1" für "go", siehe `controller/nodes/botty.py`), 
+2. einem Objekt-Namen (z.B. "position"), 
+3. je nach Action-ID eine Attribut-Liste (z.B. [2, 3] für die Koordinaten)
+
+{action: 1, name: "position", attr: "[2, 3]"}
+Botty fährt zu Position [2, 3] im Grid
+
+{action: 5, name: "flower", attr: "[4, 2]"}
+Botty fährt zur Position und dreht sich dort so lange, bis das Objekt "flower" gefunden wurde (oder eine 360° Drehung).
+Dabei gibt er Rückmeldung zum Fortschritt und Ergebnis.
 
 ### Objekt in Grid suchen (Beispiel)
 Botty fährt im Grid zur angegebenen Position und sucht ein Objekt. Findet er das Objekt, bewegt er den Arm in Richtung des Objektes
