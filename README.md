@@ -207,13 +207,12 @@ roslaunch phantomx_reactor_arm_controller arbotix_phantomx_reactor_arm_wrist.lau
 ```
 
 ### Lidar
-TODO Felix: muss hier eine oder zwei eigene Konsole gestartet werden?
 
-Zunächst muss der Hokuyo gestartet werden:
+Zunächst muss der Hokuyo in einem eigenen Terminal gestartet werden:
 ```
 rosrun hokuyo_node hokuyo_node
 ```
-Danach der hokuyoInterpreter:
+Danach der hokuyoInterpreter auch in seinem eigenem Terminal:
 ```
 rosrun lidar hokuyoInterpreter.py
 ```
@@ -278,6 +277,16 @@ Navigation per Sprachkommandos:
 ```
 roslaunch controller base_control.launch
 ```
+
+### Lidar
+
+Starten des Programms wie oben beschrieben. Anschließend in einem eigen Terminal folgendes eingeben:
+
+```
+rostopic echo /botty/hokuyoInterpreter
+```
+
+Nun sollten alle erhaltenen Ergebnisse angezeigt werden. Diese können erprobt werden, indem Objekte in das Sichtfeld des Lidar gehalten werden.
 
 # Aufgetretene Probleme und Umgang mit dem TurtleBot
 ## Stromprobleme
