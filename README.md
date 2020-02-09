@@ -278,16 +278,6 @@ Navigation per Sprachkommandos:
 roslaunch controller base_control.launch
 ```
 
-### Lidar
-
-Starten des Programms wie oben beschrieben. Anschließend in einem eigen Terminal folgendes eingeben:
-
-```
-rostopic echo /botty/hokuyoInterpreter
-```
-
-Nun sollten alle erhaltenen Ergebnisse angezeigt werden. Diese können erprobt werden, indem Objekte in das Sichtfeld des Lidar gehalten werden.
-
 # Aufgetretene Probleme und Umgang mit dem TurtleBot
 ## Stromprobleme
 Der TurtleBot lässt sich entweder direkt über das Ladegerät aufladen oder man schließt das Ladegerät an die Ladestation an und positioniert den TurtleBot darauf. Die Positionierung des TurtleBots auf dem Ladegerät muss genau zentral sein, da er sonst nicht genug Strom über die Kontakte der Ladestation erhält (am Besten per Hand zentriert auf der Ladestation zurechtrücken). Aus diesem Grund ist es empfehlenswert, den TurtleBot direkt über das Ladekabel zu laden.
