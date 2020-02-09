@@ -70,6 +70,7 @@ Das größte Problem lag jedoch daran dass die Packages zu viel Funktionalität 
 # Potenzielle Verbesserungen
 
 Falls Sie an dem Projekt weiterarbeiten möchten und die Bilderkennung weiterentwickeln möchten, empfehle ich das von mir verwendete nicht zu verwenden. Die tatsächliche Bilderkennung kann man im derzeitigen Stand nicht gut beeinflussen. Was in diesem Package gemacht wird ist, die von der Bilderkennung erhaltenen Daten zu interpretieren.
+Die Nutzung des find_object_2d packages ist jedoch auch aufgrund der Erkennrate nicht zu empfehlen. Es wurden während des Projektes viele Objekte eingespielt, welche jedoch aufgrund ihrer Größe und oder Komplexität nicht erkannt wurden.
 
 Aufgrunddessen empfehle ich die Bilderkennung mithilfe von OpenCV(https://opencv.org/) selbst zu realisieren.
 

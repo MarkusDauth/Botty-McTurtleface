@@ -26,8 +26,8 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
 )
-add_executable(action_controller_node src/action_controller.cpp)
-target_link_libraries(action_controller_node
+add_executable(camera_controller_node src/camera_controller.cpp)
+target_link_libraries(camera_controller_node
     ${catkin_LIBRARIES}
     ${OpenCV_LIBRARIES}
 )
