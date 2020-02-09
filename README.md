@@ -13,13 +13,6 @@ Was noch im Code erledigt werden muss:
 * Code muss Dokumentiert werden + Refactoring
 * NIcht benutztn Code auskommentieren?
 
-Geplante Struktur der Main-Readme, sprich Überschriften
-* Einleitung (z.B. Projektziel, wie liest man dieses Dokument?)
-* Architektur
-* Installation (Alle Installationen und Konfigurationen aufgeteilt nach den Botty-Packages auflisten)
-* Demos (hier erklären, welche Demos ausgeführt werden können, z.B. "finde Blume an X,Y", Raster erklären)
-* Aufgetretene Probleme (z.B. Stromprobleme, Lieferung, Kamera wurde umgebaut, Feste IP, Mikrofon und Lautsprecher)
-
 Folgende Demos gibt es und sollten unter der Überschrift (Demos) gemacht werden:
 - AN Koordinat fahren
 - finde ObjektX an Koord X,Y
@@ -34,7 +27,6 @@ Grundstruktur der Sub-Readmes, sprich Überschriten (Template):
 * Potenzielle Verbesserungen (hier erklären, was nachfolger noch machen könnte oder was besser sein kann)
 
 Liste an Potenziellen Verbesserungen:
-* Akku nachbestellen
 * Winkel beim Drehen besser
 * Weichere Bewegungsansteuerung
 * Umgehung von Hinternissen, (A*) ist nicht implementiert im MOtor
@@ -52,7 +44,9 @@ Ab hier beginnt unsere Doku:
 
 # Einleitung
 ## Aufbau der Dokumentation
-Dieses Readme-Datei dient als Einstieg für die Dokumentation dieses Projektes und stellt projektübergreifende Informationen dar. Die Dateien in diesem Repository dienen als [ROS](https://www.ros.org/)-Package zur Steuerung des [TurtleBot2](https://www.turtlebot.com/turtlebot2/). Das Botty-Package ist nochmal in mehrere Subpackages aufgeteilt:
+Dieses Readme-Datei dient als Einstieg für die Dokumentation dieses Projektes und stellt projektübergreifende Informationen dar. Die Dateien in diesem Repository dienen als [ROS](https://www.ros.org/)-Package zur Steuerung des [TurtleBot2](https://www.turtlebot.com/turtlebot2/).
+
+Das Botty-Package ist in mehrere Subpackages aufgeteilt:
 - arm (Steuerung des PhantomX Reactor Arm)
 - camera (Objekterkennung der 3D-Kamera)
 - lidar (Hinderniserkennung)
@@ -60,14 +54,20 @@ Dieses Readme-Datei dient als Einstieg für die Dokumentation dieses Projektes u
 - motor (Steuerung der Motoren)
 - controller (Zentrale Kontrolleinheit, welche die anderen Subpackages steuert)
 Jeder dieser Subpackages hat wiederum eine eigene ReadMe-Datei, welche die Details der einzelnen Subpackages und den Umgang mit der entsprechenden Hardware erklärt.
+Jeder dieser Readme-Dateien ist wie folgt aufgebaut:
+- Einleitung
+- Verwendete Packages 
+- Dateien
+- Konfiguration
+- Lessons Learned (Tipps und Tricks mit dem Umgang)
+- Potenzielle Verbesserungen (Verbesserungsmöglichkeiten)
 
 Weitere Inhalte dieser Readme:
 - Projektziel und umgesetzte Funktionalitäten
 - Architektur des Botty-Packages
 - Installation des Botty-Packages
 - Starten der Demos (Anleitung, wie man alle Funktionalitäten dieses Packages ausführt)
-- Aufgetretene Probleme (Tipps und Tricks)
-
+- Aufgetretene Probleme und Umgang mit dem TurtleBot (dieses Kapitel sollte vor Benutzung des TurtleBots gelesen werden)
 
 ## Projektziel und umgesetzte Funktionalitäten
 Dieses Repository ist das Ergebnis des Studienprojektes "Raumerfassung und Sprachsteuerung für einen teilautonomen Roboter" im Wintersemester 2019/20 des Studiengangs Angewandte Informatik an der Hochschule Kaiserslautern, Standort Zweibrücken. Unter der Leitung von Prof. Adrian Müller wurder der TurtleBot2 von Markus Dauth, David Kostka, Felix Mayer und Raschied Slet programmiert. Ziel war es, den TurtleBot2 (Spitzname "Botty McTurtleFace", kurz "Botty") mittels Sprachbefehlen in einem Pick-And-Place-Szenario zu steuern.
@@ -78,9 +78,7 @@ Folgende Funktionalitäten wurden in diesem Projekt realisiert:
 - In einem vordefinierten Koordinatensystem (im Folgenden "Grid" genannt) kann Botty an eine Position geschickt werden und an der Position ein vorgegebenes Objekt suchen, wobei er sich im Kreis dreht, bis er das gesucht Objekte erkannt hat oder sich um 360° gedreht hat. Die Logik für das Grid befindet sich im Subpackage "controller".
 - Bei erfolgreicher Objekterkennung bewegt sich der Arm nach vorne. Die Steuerung des Arms erfolgt über das Subpackage "arm".
 - Hindernisserkennung mittels Lidar. Siehe Subpackage "lidar".
-- Beim Vorwährtsfahren ist Botty in der Lage Objekte zu umfahren. Die Logik hierfür befindet sich im Subpackage "motor".
-
-
+- Beim Vorwährtsfahren ist Botty in der Lage Objekte zu umfahren. Die Logik hierfür und alle weiteren Befehle zum Fahren befindet sich im Subpackage "motor".
 
 # Architektur
 ## Hardware
@@ -94,22 +92,22 @@ Botty McTurtleFace t besitzt folgendene Hardware-Komponenten:
 - Mikrofon (Docooler)
 
 ## Das ROS-Package "botty"
-Dieses ROS-Package beinhaltet alle Source-Dateien für die Ausführung der oben beschriebenen Funktionalitäten und wurde für ROS Kinetic unter Ubuntu LTS 16.04. konzipiert.
+Dieses ROS-Package beinhaltet alle Source-Dateien für die Ausführung der oben beschriebenen Funktionalitäten und wurde für ROS Kinetic unter Ubuntu LTS 16.04 konzipiert.
 
-Die subpackages arm, lidar, motor, speech und controller wurden alle mit Python-Skripten realisiert, während das Subpackage camera C++ verwendet.
+Die Subpackages arm, lidar, motor, speech und controller wurden alle mit Python-Skripten realisiert, während das Subpackage camera C++ verwendet.
 
 Die Subpackages arm, camera, lidar, motor und speech dienen zur Steuerung der entsprechenden Hardware. Jedes dieser Packages bietet ROS-Services zum Auslesen von Informationen oder zur Steuerung der jeweiligen Hardware an. Jedes dieser Subpackages kommuniziert mit den Hardware-Komponenten über ROS-Packages von Dritten.
 
-Das Subpackage "controller" dient als zentrale Kontrolleinheit. Mittels der ROS-Services der anderen Packages werden Informationen der Hardware ausgelesen und darauf entsprechend reagiert. Die einzelnen Subpackages kommunizieren hierbei nicht miteiander, sondern jegliche Kommunikation und Logik findet über den Controller statt.
+Das Subpackage controller dient als zentrale Kontrolleinheit. Mittels der ROS-Services der anderen Packages werden Informationen der Hardware ausgelesen und darauf entsprechend reagiert. Die einzelnen Subpackages kommunizieren hierbei nicht miteiander, sondern jegliche Kommunikation und Logik findet über den Controller statt.
 
 TODO David: bau hier das Schaubild über die Komponenten ein. Eventuell dieses Kapitel noch besser erklären???
 
 # Installation
 Im Folgenden werden alle notwendigen Schritte aufgelistet, um dieses ROS-Package (botty) mit allen erforderlichen Abhängigkeiten zu installieren.
 
-## Vorbereitung
-Dieses Repository dient als eigenes ROS-Package und muss daher in den "src" Ordner des Catkin-Workspaces geklont werden. Zur Installation müssen mehrere Programme über apt-get installiert werden und zusätzliche Git-Repositories in den src Ordner des Catkin-Workspaces kopiert werden.
+Dieses Repository dient als eigenes ROS-Package und muss daher in den "src" Ordner des Catkin-Workspaces geklont werden. Zur Installation müssen mehrere Programme über apt-get installiert werden und zusätzliche Git-Repositories in den "src" Ordner des Catkin-Workspaces geklont werden.
 
+## Vorbereitung
 Vor der Installation sollte Folgendes ausgeführt werden:
 ```
 rosdep update
@@ -118,14 +116,18 @@ sudo apt-get dist-upgrade
 sudo apt-get install ros-kinetic-catkin python-catkin-tools
 ```
 
+Klonen des botty-Packages in den Ordner “src” des Workspace:
+```
+git clone https://github.com/RobotnikAutomation/phantomx_reactor_arm.git
+```
+
 ## PhantomX Reactor Arm
 Dependencies installieren:
 ```
 sudo apt-get install ros-kinetic-arbotix
 sudo apt-get install ros-kinetic-dynamixel-controllers
-sudo apt install ros-kinetic-moveit
 ```
-Im Ordner “src” des Workspace dieses Repository downloaden:
+Im Ordner “src” des Workspace dieses Repository klonen und der Installationsanleitung des Repositories für "Arbotix-M" folgen:
 ```
 git clone https://github.com/RobotnikAutomation/phantomx_reactor_arm.git
 ```
@@ -145,9 +147,6 @@ catkin_make
 Troubleshooting: 
 Es ist wichtig driver_common VORHER zu kompilieren, 
 bevor hokuyo_node hinzugefügt wird. Sonst scheitert der Prozess!
-
-## Motor
-Keine weitere Pakete benötigt.
 
 ## Speech
 Falls 'pip' nicht installiert ist:
@@ -177,15 +176,12 @@ catkin_make
 rosdep install sound_play
 ```
 
-## Controller
-Bis jetzt keine Dependencies
-
 ## Package
 Vor der erstmaligen ausführen von Programmen muss das Botty-Package kompiliert werden. Folgenden Befehl im catkin_ws Ordner ausführen:
 ```
 cd ~/catkin_ws
 catkin config --extend /opt/ros/kinetic
-catkin build (eventuell kommt eine Fehlermeldung, dann kann man den Befehl ignorieren)
+catkin build (falls eine Fehlermeldung kommt, kann man diesen Befehl ignorieren)
 catkin_make  
 ```
 
@@ -261,9 +257,10 @@ roslaunch astra_launch astra.launch
 ```
 
 ## Demos
+TODO Raschied, David, Felix: hier kurz alle ausführbaren Codes eurer Packages auflisten (siehe Beispiel). (hier erklären, welche Demos ausgeführt werden können, z.B. "finde Blume an X,Y", Raster erklären)
+
 Das Botty-Package bietet mehrere ausführbare Programme an. Für jedes dieser Programme, sollten die entsprechenden Komponenten aus dem vorherhigen Kapitel gestartet werden.
 
-TODO Raschied, David, Felix: hier kurz alle ausführbaren Codes eurer Packages auflisten (siehe Beispiel)
 
 ### Objekt in Grid suchen (Beispiel)
 Botty fährt im Grid zur angegebenen Position und sucht ein Objekt. Findet er das Objekt, bewegt er den Arm in Richtung des Objektes
@@ -279,3 +276,29 @@ Navigation per Sprachkommandos:
 roslaunch controller base_control.launch
 ```
 
+# Aufgetretene Probleme und Umgang mit dem TurtleBot
+## Stromprobleme
+Der TurtleBot lässt sich entweder direkt über das Ladegerät aufladen oder man schließt das Ladegerät an die Ladestation an und positioniert den TurtleBot darauf. Die Positionierung des TurtleBots auf dem Ladegerät muss genau zentral sein, da er sonst nicht genug Strom über die Kontakte der Ladestation erhält (am Besten per Hand zentriert auf der Ladestation zurechtrücken). Aus diesem Grund ist es empfehlenswert, den TurtleBot direkt über das Ladekabel zu laden.
+
+Man kann leider nicht die aktuelle Ladung der Akkus auslesen, weswegen der TurtleBot nach gebraucht geladen werden sollte. Haben die Akkus keinen Saft mehr, schaltet sich das NUC komplett aus. Sollte dies geschehen, sollte vor einschalten des NUCs der TurtleBot für 2 bis 3 Minuten geladen werden, da es sonst möglich ist, dass der TurtleBot sich direkt wieder ausschaltet.
+
+Da die Akkus viele Ladezyklen wärend des Projektes durchgemacht haben, könnte es eventuell sein, dass neue Akkus bestellt werden müssen.
+
+Ebenfalls sollte auch auf den korrekten Gebrauch des USB-Hubs geachtet werden (siehe nächstes Kapitel).
+
+## USB-Anschlüsse
+Der Onboard-Rechner des TurtleBots (NUC) hat nur 4 USB-Ports. Greifarm, Lidar und 3D-Kamera belegen bereits 3 davon. Wenn auf dem NUC direkt mit Maus und Tastatur arbeiten will, muss man entweder eines der anderen Geräte abtrennen oder einen USB-Hub verwenden. Lautsprecher und Kopfhörer benötigen auch jeweils einen USB-Anschluss. Wenn der USB-Hub benutzt wird, sollte darauf geachtet werden, dass die großen Stromverbraucher(Greifarm, Lidar, 3D-Kamera) direkt am NUC und nicht über den USB-Hub angeschlossen sind, da es sonst Probleme mit der Stromversorgung geben kann und der Akku sich sehr schnell entlädt.
+
+## IP-Adresse
+Um per SSH auf dem TurtleBot zu arbeiten, hat dieser eine feste IP-Adresse im Hochschul-Netz zugewiesen bekommen. Die feste IP-Adresse lautet: XXXXX (TODO: kennt einer die IP?)
+ 
+## Mikrofon und Lautsprecher
+Es wurden zusätzlich ein Lautsprecher und ein Mikrofon für den TurtleBot bestellt. Jedoch war es nicht möglich, dieser per Buchse am NUC zu benutzen, weswegen sie auch per USB angeschlossen werden müssen.
+
+## Lieferung
+Bei der Lieferung des TurtleBots sind die Stangen für die Halterungsplattformen beschädigt worden, weswegen neue Stangen und Schrauben nachgeliefert wurden. Die obere Plattform ist aus diesem Grund nicht zu 100% befästigt.
+
+Außerdem ist während dem Projektes der Arduino des Greifarms ausgefallen, weswegen hierfür auch ein Ersatz nachgeliefert wurde.
+ 
+## Umbau der Kamera
+Um eine bessere Objekterkennung zu ermöglichen, wurde die Halterung für die 3D-Kamera an der Vorderseite des TurtleBot montiert (ursrpünglich befindet sich diese am hinteren Teil). Dadurch sind die Stangen und Halterungsplattformen nicht mehr im Bild der Kamera.
