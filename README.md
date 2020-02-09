@@ -51,39 +51,72 @@ Was berücksicht werden sollte:
 Ab hier beginnt unsere Doku:
 
 # Einleitung
-Dieses Repository stellt das Ergebnis des Studienprojekt "Raumerfassung und Sprachsteuerung für einen teilautonomen Roboter" im Wintersemester 2019/20 an der Hochschule Kaiserslautern, Standort Zweibrücken, dar. Unter der Leitung von Prof. Adrian Müller wurder der TurtleBot 2 von Markus Dauth, David Kostka, Felix Mayer und Raschied Slet programmiert. Ziel war es, einen TurtleBot 2 mittels Sprachbefehlen in einem Pick-And-Place-Szenario zu steuern.
+## Aufbau der Dokumentation
+Dieses Readme-Datei dient als Einstieg für die Dokumentation dieses Projektes und stellt projektübergreifende Informationen dar. Die Dateien in diesem Repository dienen als [ROS](https://www.ros.org/)-Package zur Steuerung des [TurtleBot2](https://www.turtlebot.com/turtlebot2/). Das Botty-Package ist nochmal in mehrere Subpackages aufgeteilt:
+- arm (Steuerung des PhantomX Reactor Arm)
+- camera (Objekterkennung der 3D-Kamera)
+- lidar (Hinderniserkennung)
+- speech (Sprachsteuerung und -ausgabe)
+- motor (Steuerung der Motoren)
+- controller (Zentrale Kontrolleinheit, welche die anderen Subpackages steuert)
+Jeder dieser Subpackages hat wiederum eine eigene ReadMe-Datei, welche die Details der einzelnen Subpackages und den Umgang mit der entsprechenden Hardware erklärt.
 
-Dieses ROS-Package dient zur Steuerung des Turtlebot2 mit folgenden Komponenten:
-- PhantomX Reactor Arm
-- Hokuyo URG-04LX-UG01 (Lidar)
-- Orbbec Astra (RD-Kamera)
+Weitere Inhalte dieser Readme:
+- Projektziel und umgesetzte Funktionalitäten
+- Architektur des Botty-Packages
+- Installation des Botty-Packages
+- Starten der Demos (Anleitung, wie man alle Funktionalitäten dieses Packages ausführt)
+- Aufgetretene Probleme (Tipps und Tricks)
+
+
+## Projektziel und umgesetzte Funktionalitäten
+Dieses Repository ist das Ergebnis des Studienprojektes "Raumerfassung und Sprachsteuerung für einen teilautonomen Roboter" im Wintersemester 2019/20 des Studiengangs Angewandte Informatik an der Hochschule Kaiserslautern, Standort Zweibrücken. Unter der Leitung von Prof. Adrian Müller wurder der TurtleBot2 von Markus Dauth, David Kostka, Felix Mayer und Raschied Slet programmiert. Ziel war es, den TurtleBot2 (Spitzname "Botty McTurtleFace", kurz "Botty") mittels Sprachbefehlen in einem Pick-And-Place-Szenario zu steuern.
+
+Folgende Funktionalitäten wurden in diesem Projekt realisiert:
+- Mittels dem Sprackerkennungs-Framework "PocketSphinx" kann Botty per Sprachsteuerung gesteuert werden. Botty versteht eine einfache Grammatik und kann mit einem Text-to-Speech-System (TTS) über Lautsprecher antworten. Siehe Subpackage "speech"
+- Objekterkennung von mehreren vortrainierten Objekten. Siehe Subpackage "camera".
+- In einem vordefinierten Koordinatensystem (im Folgenden "Grid" genannt) kann Botty an eine Position geschickt werden und an der Position ein vorgegebenes Objekt suchen, wobei er sich im Kreis dreht, bis er das gesucht Objekte erkannt hat oder sich um 360° gedreht hat. Die Logik für das Grid befindet sich im Subpackage "controller".
+- Bei erfolgreicher Objekterkennung bewegt sich der Arm nach vorne. Die Steuerung des Arms erfolgt über das Subpackage "arm".
+- Hindernisserkennung mittels Lidar. Siehe Subpackage "lidar".
+- Beim Vorwährtsfahren ist Botty in der Lage Objekte zu umfahren. Die Logik hierfür befindet sich im Subpackage "motor".
+
+
+
+# Architektur
+## Hardware
+Botty McTurtleFace t besitzt folgendene Hardware-Komponenten:
+- [PhantomX Reactor Arm](https://www.roscomponents.com/en/robotic-arms/100-phantomx-reactor.html#/assembled-no/reactor_wrist_rotate-no)
+- [Hokuyo URG-04LX-UG01 (Lidar)](https://www.roscomponents.com/en/lidar-laser-scanner/83-urg-04lx-ug01.html)
+- [Orbbec Astra (3D-Kamera)](https://www.roscomponents.com/en/cameras/76-orbbec.html)
 - NUC mit Ubuntu 16.04 LTS
-- Kobuki Base
+- [Kobuki Base](https://www.roscomponents.com/en/mobile-robots/97-kobuki.html)
 - Lautsprecher (mifa)
 - Mikrofon (Docooler)
 
-Das Botty-Package ist nochmal in mehrere Subpackages aufgeteilt.
-- arm
-- camera
-- lidar
-- speech
-- controller
-- motor
+## Das ROS-Package "botty"
+Dieses ROS-Package beinhaltet alle Source-Dateien für die Ausführung der oben beschriebenen Funktionalitäten und wurde für ROS Kinetic unter Ubuntu LTS 16.04. konzipiert.
 
-Jeder dieser Packages hat wiederum eine eigene ReadMe-Datei, welche die Details der einzelnen Packages erklärt.
+Die subpackages arm, lidar, motor, speech und controller wurden alle mit Python-Skripten realisiert, während das Subpackage camera C++ verwendet.
+
+Die Subpackages arm, camera, lidar, motor und speech dienen zur Steuerung der entsprechenden Hardware. Jedes dieser Packages bietet ROS-Services zum Auslesen von Informationen oder zur Steuerung der jeweiligen Hardware an. Jedes dieser Subpackages kommuniziert mit den Hardware-Komponenten über ROS-Packages von Dritten.
+
+Das Subpackage "controller" dient als zentrale Kontrolleinheit. Mittels der ROS-Services der anderen Packages werden Informationen der Hardware ausgelesen und darauf entsprechend reagiert. Die einzelnen Subpackages kommunizieren hierbei nicht miteiander, sondern jegliche Kommunikation und Logik findet über den Controller statt.
+
+TODO David: bau hier das Schaubild über die Komponenten ein. Eventuell dieses Kapitel noch besser erklären???
 
 # Installation
-## Allgemein
+Im Folgenden werden alle notwendigen Schritte aufgelistet, um dieses ROS-Package (botty) mit allen erforderlichen Abhängigkeiten zu installieren.
 
-Dieses Repository dient als eigenes ROS-Package und muss daher in den src Ordner des Catkin_Workspaces geklont werden. Es müssen mehrere Programme über apt-get installiert werden und Git-Repositories in den src Ordner des 
+## Vorbereitung
+Dieses Repository dient als eigenes ROS-Package und muss daher in den "src" Ordner des Catkin-Workspaces geklont werden. Zur Installation müssen mehrere Programme über apt-get installiert werden und zusätzliche Git-Repositories in den src Ordner des Catkin-Workspaces kopiert werden.
 
-Vor der Installation sollte das ausgeführt werden:
+Vor der Installation sollte Folgendes ausgeführt werden:
 ```
 rosdep update
 sudo apt-get update
 sudo apt-get dist-upgrade
 sudo apt-get install ros-kinetic-catkin python-catkin-tools
-````
+```
 
 ## PhantomX Reactor Arm
 Dependencies installieren:
@@ -156,29 +189,28 @@ catkin build (eventuell kommt eine Fehlermeldung, dann kann man den Befehl ignor
 catkin_make  
 ```
 
-# Programme ausführen
+# Starten der Demos
+Im Folgenden wird erläutert, wie man die Funktionalitäten des Botty-Packages ausführt. Für jede Hardware-Komponente müssen Befehle ausgeführt werden, um deren ROS-Nodes zu starten.
+Um eine bessere Übersicht über den aktuellen Status der einzelnen Komponenten (und eventuelles Debugging) zu erhalten, wird empfohlen, dass die jeweiligen Skripte in einzelnen Konsolen (Terminals) ausgeführt werden.
 
-Für alle Programme muss vorher der Roscore gestartet werden. Mit dem Turtlebot geht das unter:
+## Starten der Botty-Komponenten
+Um die Demos zu starten, müssen zuerst vorher die ROS-Nodes der einzelnen Hardware-Komponenten gestartet werden.
+
+### Roscore
+Für alle Programme muss vorher der Roscore in einer eigenen Konsole gestartet werden. Mit dem TurtleBot2 geht das unter:
 ```
 roslaunch kobuki_node minimal.launch
 ```
 
-## PhantomX Reactor Arm
+### PhantomX Reactor Arm starten
 Arm-Nodes in eigener Konsole starten:
 ```
 roslaunch phantomx_reactor_arm_controller arbotix_phantomx_reactor_arm_wrist.launch
 ```
-Rviz-Demo starten:
-```
-roslaunch phantomx_reactor_arm_moveit_config demo.launch 
-```
 
-Python Skript für den Arm starten, z.B.:
-```
-rosrun botty pose_command.py
-```
+### Lidar
+TODO Felix: muss hier eine oder zwei eigene Konsole gestartet werden?
 
-## Lidar
 Zunächst muss der Hokuyo gestartet werden:
 ```
 rosrun hokuyo_node hokuyo_node
@@ -187,19 +219,21 @@ Danach der hokuyoInterpreter:
 ```
 rosrun lidar hokuyoInterpreter.py
 ```
+
 Troubleshooting: 
 Falls der Hokuyo nicht gefunden wird, folgendes zuvor ausführen, damit der passende Port angesprochen wird
 ```
 sudo chmod a+rw /dev/ttyACM0
 ```
 
-## MotorService
-In einem Terminal folgende Instruktionen folgen:
+### Motor
+In einer eigenen Konsole folgende Befehl ausführen:
 ```
 rosrun motor motorService.py
 ```
 
-## Speech
+### Speech
+TODO David: wann führt man was aus?
 Recognizer/Parser starten:
 ```
 roslaunch speech parser.launch
@@ -212,20 +246,9 @@ roslaunch speech recognizer.launch
 
 Dazu benötigte Nodes 'send_audio.py' und 'soundplay_node.py' werden automatisch mit gestartet.
 
-## Controller
-Arm-steuerung per Sprachkommandos:
-```
-roslaunch controller arm_control.launch
-```
+### Kamera
+Die Kamera kann entweder direkt auf dem TrutleBot ausgeführt werden oder auf einen eigenen Rechner ausgelagert werden. Wenn die Kamera auf einem eigenen Rechner läuft, kann hierdurch Rechenleistung (und somit auch Storm) auf dem TurtleBot gespart werden.
 
-Navigation per Sprachkommandos:
-```
-roslaunch controller base_control.launch
-```
-
-Das Speech-Modul wird beim launch automatisch gestartet, muss also nicht davor gestartet werden.
-
-## Kamera
 Auf eigenem Rechner starten:
 
 ```
@@ -237,7 +260,22 @@ Auf dem Turtlebot-Rechner starten:
 roslaunch astra_launch astra.launch
 ```
 
-# Sonstiges
+## Demos
+Das Botty-Package bietet mehrere ausführbare Programme an. Für jedes dieser Programme, sollten die entsprechenden Komponenten aus dem vorherhigen Kapitel gestartet werden.
 
-Teammitglieder:
-Markus Dauth, Felix Mayer, David Kostka, Raschied Slet
+TODO Raschied, David, Felix: hier kurz alle ausführbaren Codes eurer Packages auflisten (siehe Beispiel)
+
+### Objekt in Grid suchen (Beispiel)
+Botty fährt im Grid zur angegebenen Position und sucht ein Objekt. Findet er das Objekt, bewegt er den Arm in Richtung des Objektes
+```
+roslaunch controller arm_control.launch
+```
+
+### Arms
+Das Speech-Modul wird beim launch automatisch gestartet, muss also nicht davor gestartet werden.
+
+Navigation per Sprachkommandos:
+```
+roslaunch controller base_control.launch
+```
+
