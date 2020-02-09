@@ -292,22 +292,22 @@ Botty versucht auf die Docking-Station (Ladestation) zu fahren.
 "grab the object"  
 Botty "greift" was vor ihm liegt.  
 
-#### Controller Kommandos
-Mit `rostopic pub /botty/speech/commands` kann eine Command-Message an den Controller gesendet werden.
-Die Message muss gefüllt werden mit:
-1. der Action-ID (z.B. "1" für "go", siehe `controller/nodes/botty.py`), 
-2. einem Objekt-Namen (z.B. "position"), 
-3. je nach Action-ID eine Attribut-Liste (z.B. [2, 3] für die Koordinaten)
+#### Controller Kommandos  
+Mit `rostopic pub /botty/speech/commands` kann eine Command-Message an den Controller gesendet werden.  
+Die Message muss gefüllt werden mit:  
+1. der Action-ID (z.B. "1" für "go", siehe `controller/nodes/botty.py`),  
+2. einem Objekt-Namen (z.B. "position"),   
+3. je nach Action-ID eine Attribut-Liste (z.B. [2, 3] für die Koordinaten)  
 
-{action: 1, name: "position", attr: "[2, 3]"}
-Botty fährt zu Position [2, 3] im Grid
+{action: 1, name: "position", attr: "[2, 3]"}  
+Botty fährt zu Position [2, 3] im Grid  
 
-{action: 5, name: "flower", attr: "[4, 2]"}
-Botty fährt zur Position und dreht sich dort so lange, bis das Objekt "flower" gefunden wurde (oder eine 360° Drehung).
-Dabei gibt er Rückmeldung zum Fortschritt und Ergebnis.
+{action: 5, name: "flower", attr: "[4, 2]"}  
+Botty fährt zur Position und dreht sich dort so lange, bis das Objekt "flower" gefunden wurde (oder eine 360° Drehung).  
+Dabei gibt er Rückmeldung zum Fortschritt und Ergebnis.  
 
-### Objekt in Grid suchen (Beispiel)
-Botty fährt im Grid zur angegebenen Position und sucht ein Objekt. Findet er das Objekt, bewegt er den Arm in Richtung des Objektes
+### Objekt in Grid suchen (Beispiel)  
+Botty fährt im Grid zur angegebenen Position und sucht ein Objekt. Findet er das Objekt, bewegt er den Arm in Richtung des Objektes  
 (TODO: weiter machen)
 ```
 roslaunch controller arm_control.launch
