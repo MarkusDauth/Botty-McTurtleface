@@ -1,10 +1,20 @@
 #!/usr/bin/python
 
 '''
-Author: David Kostka
+Authors: Markus Dauth, David Kostka
+09.02.2020
 
 Description:
 Keyword based arm control
+
+This script requires the controller from the ROS-Package "phantomx_reactor_arm" to be running:
+https://github.com/RobotnikAutomation/phantomx_reactor_arm
+
+To start the controller:
+roslaunch phantomx_reactor_arm_controller arbotix_phantomx_reactor_arm_wrist.launch
+
+Attention!
+Only use values between -1.5 and 1.5 for the joints or you might damage the arm!
 '''
 
 import rospy

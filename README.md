@@ -62,6 +62,8 @@ Jeder dieser Readme-Dateien ist wie folgt aufgebaut:
 - Lessons Learned (Tipps und Tricks mit dem Umgang)
 - Potenzielle Verbesserungen (Verbesserungsmöglichkeiten)
 
+Im Ordner "documents" befinden sich die mitgelieferte Anleitung des TurtleBots. 
+
 Weitere Inhalte dieser Readme:
 - Projektziel und umgesetzte Funktionalitäten
 - Architektur des Botty-Packages
@@ -83,7 +85,7 @@ Folgende Funktionalitäten wurden in diesem Projekt realisiert:
 # Architektur
 ## Hardware
 Botty McTurtleFace t besitzt folgendene Hardware-Komponenten:
-- [PhantomX Reactor Arm](https://www.roscomponents.com/en/robotic-arms/100-phantomx-reactor.html#/assembled-no/reactor_wrist_rotate-no)
+- [PhantomX Reactor Arm (mit Wrist)](https://www.roscomponents.com/en/robotic-arms/100-phantomx-reactor.html#/montaje_widowx-yes/reactor_wrist_rotate-yes)
 - [Hokuyo URG-04LX-UG01 (Lidar)](https://www.roscomponents.com/en/lidar-laser-scanner/83-urg-04lx-ug01.html)
 - [Orbbec Astra (3D-Kamera)](https://www.roscomponents.com/en/cameras/76-orbbec.html)
 - NUC mit Ubuntu 16.04 LTS
@@ -264,6 +266,7 @@ Das Botty-Package bietet mehrere ausführbare Programme an. Für jedes dieser Pr
 
 ### Objekt in Grid suchen (Beispiel)
 Botty fährt im Grid zur angegebenen Position und sucht ein Objekt. Findet er das Objekt, bewegt er den Arm in Richtung des Objektes
+(TODO: weiter machen)
 ```
 roslaunch controller arm_control.launch
 ```
@@ -282,7 +285,7 @@ Der TurtleBot lässt sich entweder direkt über das Ladegerät aufladen oder man
 
 Man kann leider nicht die aktuelle Ladung der Akkus auslesen, weswegen der TurtleBot nach gebraucht geladen werden sollte. Haben die Akkus keinen Saft mehr, schaltet sich das NUC komplett aus. Sollte dies geschehen, sollte vor einschalten des NUCs der TurtleBot für 2 bis 3 Minuten geladen werden, da es sonst möglich ist, dass der TurtleBot sich direkt wieder ausschaltet.
 
-Da die Akkus viele Ladezyklen wärend des Projektes durchgemacht haben, könnte es eventuell sein, dass neue Akkus bestellt werden müssen.
+Da die Akkus viele Ladezyklen während des Projektes durchgemacht haben, könnte es eventuell sein, dass neue Akkus bestellt werden müssen.
 
 Ebenfalls sollte auch auf den korrekten Gebrauch des USB-Hubs geachtet werden (siehe nächstes Kapitel).
 
@@ -302,3 +305,13 @@ Außerdem ist während dem Projektes der Arduino des Greifarms ausgefallen, wesw
  
 ## Umbau der Kamera
 Um eine bessere Objekterkennung zu ermöglichen, wurde die Halterung für die 3D-Kamera an der Vorderseite des TurtleBot montiert (ursrpünglich befindet sich diese am hinteren Teil). Dadurch sind die Stangen und Halterungsplattformen nicht mehr im Bild der Kamera.
+
+## Entwicklungsumgebung
+Für die Entwicklung des TurtleBots eignet sich am besten ein native Ubuntu 16.04 LTS Umgebung, da ROS nur auf Linux läuft. Alternativ ist auf einem Rechner Dual-Boot mit Windows und Linux zu empfehlen.
+Während des Projektes wurde eine portable Lösung mittels einer Ubuntu-SSD getestet, was aber auf den meisten Laptops nicht funktionierte. Virtuelle Umgebungen (sowohl auf dem eigenen Laptop, wie auch auf einem Remote-Server) eignen sich nicht für die Entwicklung mit ROS, da es hier zu sehr großen Problemen mit den Grafikttreibern kommt und die Performanz nicht ausreicht.
+
+## Virtuelle Umgebung Gazebo
+Ursprünglich war es angedacht, dass Programmcode zunächst virtuell mittels Gazebo getestet werden soll, bevor es auf dem echten TurtleBot ausgeführt wird. Jedoch ist es schwer die virtuelle Umgebung in Gazebo zum Laufen zu bringen und diese Umgebung mit den entsprechenden virtuellen Hardwarekomponenten zu konfigurieren. Es empfiehlt sich also, direkt mit dem TurtleBot der echten Welt zu arbeiten.
+
+# Autoren
+Markus Dauth, David Kostka, Felix Mayer und Raschied Slet

@@ -11,7 +11,6 @@ https://www.hokuyo-aut.jp/search/single.php?serial=166
 ## Funktionsweise
 Alle Objekte, die sich in einem vordefinierten Radius des Lidar befinden, werden als Hindernisse erkannt (TODO: was genau ist der Abstand?). Alle erkannten Hindernisse werden in drei Richtungsgruppen eingeordnet - Links, Rechts und Vorne. Ergebniswerte, welche aus mehreren Listen bestehen, können entweder auf Anfrage (ROS-Service) oder durch ständige Benachrichtigung (ROS-Message) erhalten werden. Für jede Richtungsgruppe gibt es zwei Listen: Eine Liste gefüllt mit Gradzahlen, die die exakte Positionierung des Hindernisses darstellen und eine Liste mit den Distanzen (in cm) zu den jeweiligen Hindernissen. Zu beachten ist, dass die Zugehörigkeit der Gradzahlen zu den Distanzen durch die identische Indexstelle gegeben ist. Wenn beispielsweise an Stelle 7 der Gradzahl-Liste für links ein Hindernis hinterlegt ist, ist die zugehörige Distanz ebenso an dem 7. Index in der Distanz-Liste für links hinterlegt.
 
-
 ## Verwendete Packages
 Daten werden vom Lidar selbst über das 'Hokuyo Node' package ausgelesen und dann in diesem Botty-Package (lidar) weiter verarbeitet. Dazu ist ebenso das Package 'Driver Common' notwendig, da 'Hokuyo Node' allein nicht auf ROS-Kinetic lauffähig ist.
 

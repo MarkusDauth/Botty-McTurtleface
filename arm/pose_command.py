@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+'''
+Markus Dauth, 09.02.2020
+Dieses Skript dient als Beispielcode für die Ausführung von vordefinierten Posen mittels MoveIt.
+Dieses Skript stellt die ROS-Node "arm_pose" zur verfügung.
+Die Posen TOPRIGHT und BOTTOMLEFT müssen mit dem MoveIt-Setup-Assistant konfiguriert werden.
+
+'''
+
+
 import sys
 import copy
 import rospy
