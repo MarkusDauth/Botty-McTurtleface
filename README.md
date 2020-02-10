@@ -229,6 +229,18 @@ Auf dem Turtlebot-Rechner starten:
 roslaunch astra_launch astra.launch
 ```
 
+### Controller
+Nur eine Node muss gestartet werden.
+```
+rosrun controller control.py
+```
+Sobald alle anderen Komponenten gestartet sind, wird auch der Controller Initialisiert.
+Dabei sollte Botty "I am Botty McTurtleFace" sagen.
+
+### Hardware
+Bei dem Bluetooth Speaker den An/Aus Knopf gedrückt halten.
+Eventuell muss Turtlebot/Ubuntu wieder manuell über Bluetooth mit dem Lautsprecher verbunden werden.
+
 ## Demos
 Wenn alle Komponenten gestartet sind, sollten folgende Demos möglich sein.    
 ### Sprachbefehle
