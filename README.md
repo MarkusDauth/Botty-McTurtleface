@@ -231,16 +231,23 @@ roslaunch astra_launch astra.launch
 ## Demos
 Wenn alle Komponenten gestartet sind, sollten folgende Demos möglich sein.    
 ### Sprachbefehle
-"go forward/back/left/right"  
-Botty fährt 1 Meter vorwärts/rückwärts bzw. dreht sich um 90 Grad nach rechts/links  
+Für einfacheres Testen kann der Befehl direkt als Text an den Parser gesendet werden.
+Dazu per `rostopic pub` an `/botty/speech/grammar_data` den Text veröffentlichen.  
+
+"go forward/left/right"  
+Botty fährt 2 Meter vorwärts bzw. dreht sich um 90 Grad nach rechts/links  
+Beim vorwärts fahren sollte Botty Objekte umgehen, die im Weg stehen.
 
 "go to the docking station"  
 Botty versucht auf die Docking-Station (Ladestation) zu fahren.  
+Damit die docking routine ausgeführt werden kann muss im Controller in der Klasse `Nav` `enable_dock = True` gesetzt werden.
+Außerdem muss `roslaunch kobuki_auto_docking minimal.launch` gestartet werden.
 
 "grab the object"  
 Botty "greift" was vor ihm liegt.  
 
 ### Controller Kommandos  
+Manche Befehle können noch nicht per Sprachbefehl gestartet werden.
 Mit `rostopic pub /botty/speech/commands` kann eine Command-Message an den Controller gesendet werden.  
 Die Message muss gefüllt werden mit:  
 1. der Action-ID (z.B. "1" für "go", siehe `controller/nodes/botty.py`),  
