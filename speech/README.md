@@ -9,6 +9,12 @@ Im Grunde besteht es aus 3 Teilaufgaben:
 In diesem Abschnitt wird kurz erläutert, wie das Modul grob funktioniert.  
 im Abschnitt "Dateien" wird näher auf die Implementierung eingegangen.  
 
+Einige Beispielsätze:
+"go forward"
+"go to the kitchen"
+"find a flower"
+"grab the cup"
+
 ### Spracherkennung
 Für die Spracherkennung wird erst im Keyword-Mode auf ein Wake-Up Phrase gewartet.  
 Danach wechselt die Erkennung in den Grammar-Mode, in der auf das eigentliche Sprachkommando abgehört wird.  
