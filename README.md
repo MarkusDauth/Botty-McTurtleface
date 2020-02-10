@@ -9,6 +9,7 @@ Das Botty-Package ist in mehrere Subpackages aufgeteilt:
 - speech (Sprachsteuerung und -ausgabe)
 - motor (Steuerung der Motoren)
 - controller (Zentrale Kontrolleinheit, welche die anderen Subpackages steuert)
+
 Jeder dieser Subpackages hat wiederum eine eigene ReadMe-Datei, welche die Details der einzelnen Subpackages und den Umgang mit der entsprechenden Hardware erklärt.
 Jeder dieser Readme-Dateien ist wie folgt aufgebaut:
 - Einleitung
