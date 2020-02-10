@@ -119,10 +119,6 @@ Die Subpackages arm, lidar, motor, speech und controller wurden alle mit Python-
 
 Die Subpackages arm, camera, lidar, motor und speech dienen zur Steuerung der entsprechenden Hardware. Jedes dieser Packages bietet ROS-Services zum Auslesen von Informationen oder zur Steuerung der jeweiligen Hardware an. Jedes dieser Subpackages kommuniziert mit den Hardware-Komponenten über ROS-Packages von Dritten.
 
-Das Subpackage controller dient als zentrale Kontrolleinheit. Mittels der ROS-Services der anderen Packages werden Informationen der Hardware ausgelesen und darauf entsprechend reagiert. Die einzelnen Subpackages kommunizieren hierbei nicht miteiander, sondern jegliche Kommunikation und Logik findet über den Controller statt.
-
-TODO David: bau hier das Schaubild über die Komponenten ein. Eventuell dieses Kapitel noch besser erklären???
-
 # Installation
 Im Folgenden werden alle notwendigen Schritte aufgelistet, um dieses ROS-Package (botty) mit allen erforderlichen Abhängigkeiten zu installieren.
 
@@ -305,21 +301,6 @@ Botty fährt zu Position [2, 3] im Grid
 {action: 5, name: "flower", attr: "[4, 2]"}  
 Botty fährt zur Position und dreht sich dort so lange, bis das Objekt "flower" gefunden wurde (oder eine 360° Drehung).  
 Dabei gibt er Rückmeldung zum Fortschritt und Ergebnis.  
-
-### Objekt in Grid suchen (Beispiel)  
-Botty fährt im Grid zur angegebenen Position und sucht ein Objekt. Findet er das Objekt, bewegt er den Arm in Richtung des Objektes  
-(TODO: weiter machen)
-```
-roslaunch controller arm_control.launch
-```
-
-### Arms
-Das Speech-Modul wird beim launch automatisch gestartet, muss also nicht davor gestartet werden.
-
-Navigation per Sprachkommandos:
-```
-roslaunch controller base_control.launch
-```
 
 # Aufgetretene Probleme und Umgang mit dem TurtleBot
 ## Stromprobleme
