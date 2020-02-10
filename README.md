@@ -1,47 +1,3 @@
-# TODO
-Es gibt eine "Main-Readme" (dieses Dokument) und in jedem unserer Packages (arm, camera, lidar, speech, controller) jeweils eine "Sub-Readme"
-
-Was noch in der Doku erklärt werden muss:
-* Was muss alles installiert werden? Eine große Installations anleitung in der Haupt Readme
-* Wo stehen Angaben zu Version, Datum und Author?
-* Wie kompiliert unser Projekt?
-* Wie sieht die korrekte Ordnerstruktur aus
-* Botty feste IP Adresse (10.0.189.60)
-
-Was noch im Code erledigt werden muss:
-* Author, Datum und Version an ansprechenden stellen anpassen
-* Code muss Dokumentiert werden + Refactoring
-* NIcht benutztn Code auskommentieren?
-
-Folgende Demos gibt es und sollten unter der Überschrift (Demos) gemacht werden:
-- AN Koordinat fahren
-- finde ObjektX an Koord X,Y
-- Finde Objekt (Was siehst du)
-
-Grundstruktur der Sub-Readmes, sprich Überschriten (Template):
-* Einleitung (Was soll wie gemacht werden? kurz die Funktionsweise erklären, Hardware kurz eklären, Links für Hardware)
-* Verwendete Packages (Auflisten, Links, erklären und benutzt Tutorials verlinken)
-* Dateien (Alle selbst geschriebenen Dateien erklären, aber nicht auf Code eingehen)
-* Konfiguration (z.B. neue Bilder für die Kaemera trainieren, neue Posen für den Arm)
-* Lessons Learned (Expereminte, die nicht funktioniert haben)
-* Potenzielle Verbesserungen (hier erklären, was nachfolger noch machen könnte oder was besser sein kann)
-
-Liste an Potenziellen Verbesserungen:
-* Winkel beim Drehen besser
-* Weichere Bewegungsansteuerung
-* Umgehung von Hinternissen, (A*) ist nicht implementiert im MOtor
-* Bessere Kamera Erkennung
-* Neue Befehle z.B. “Bewege dich auf Kachel 2,2"
-
-
-Was berücksicht werden sollte:
-- Kein Glossar oder Literaturverzeichnis
-- Trello aufräumen
-- Nicht erklären was der Roboter ist, sondern nur was gemacht wurde. Entsprechende Webseiten verlinken
-- Trello aufräumen
-
-Ab hier beginnt unsere Doku:
-
 # Einleitung
 ## Aufbau der Dokumentation
 Dieses Readme-Datei dient als Einstieg für die Dokumentation dieses Projektes und stellt projektübergreifende Informationen dar. Die Dateien in diesem Repository dienen als [ROS](https://www.ros.org/)-Package zur Steuerung des [TurtleBot2](https://www.turtlebot.com/turtlebot2/).
@@ -273,10 +229,6 @@ roslaunch astra_launch astra.launch
 ```
 
 ## Demos
-TODO Raschied, David, Felix: hier kurz alle ausführbaren Codes eurer Packages auflisten (siehe Beispiel). (hier erklären, welche Demos ausgeführt werden können, z.B. "finde Blume an X,Y", Raster erklären)
-
-Das Botty-Package bietet mehrere ausführbare Programme an. Für jedes dieser Programme, sollten die entsprechenden Komponenten aus dem vorherhigen Kapitel gestartet werden.
-
 ### Navigation
 #### Sprachbefehle
 "go forward/back/left/right"  
@@ -316,7 +268,7 @@ Ebenfalls sollte auch auf den korrekten Gebrauch des USB-Hubs geachtet werden (s
 Der Onboard-Rechner des TurtleBots (NUC) hat nur 4 USB-Ports. Greifarm, Lidar und 3D-Kamera belegen bereits 3 davon. Wenn auf dem NUC direkt mit Maus und Tastatur arbeiten will, muss man entweder eines der anderen Geräte abtrennen oder einen USB-Hub verwenden. Lautsprecher und Kopfhörer benötigen auch jeweils einen USB-Anschluss. Wenn der USB-Hub benutzt wird, sollte darauf geachtet werden, dass die großen Stromverbraucher(Greifarm, Lidar, 3D-Kamera) direkt am NUC und nicht über den USB-Hub angeschlossen sind, da es sonst Probleme mit der Stromversorgung geben kann und der Akku sich sehr schnell entlädt.
 
 ## IP-Adresse
-Um per SSH auf dem TurtleBot zu arbeiten, hat dieser eine feste IP-Adresse im Hochschul-Netz zugewiesen bekommen. Die feste IP-Adresse lautet: XXXXX (TODO: kennt einer die IP?)
+Um per SSH auf dem TurtleBot zu arbeiten, hat dieser eine feste IP-Adresse im Hochschul-Netz zugewiesen bekommen. Die feste IP-Adresse lautet: 10.0.189.60
  
 ## Mikrofon und Lautsprecher
 Es wurden zusätzlich ein Lautsprecher und ein Mikrofon für den TurtleBot bestellt. Jedoch war es nicht möglich, dieser per Buchse am NUC zu benutzen, weswegen sie auch per USB angeschlossen werden müssen.
