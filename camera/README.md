@@ -85,4 +85,5 @@ Aufgrunddessen empfehle ich die Bilderkennung mithilfe von OpenCV(https://opencv
 
 Neben dem Mapping von object_id zu Name des Objektes wurde findet sich im Code eine Positionsbestimmung von Objekten, also ob das Objekt aus Sicht der Kamera links oben, rechts oben, links unten oder rechts unten ist. Da diese Funktion im Rahmen des Projektes jedoch nicht mehr verwendet wurde, wurde diese Funktion ausgeschaltet, ist jedoch im Code noch zu finden. 
 
-
+# Autoren
+Raschied Slet - ursprüngliche Arbeiten
