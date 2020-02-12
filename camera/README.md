@@ -75,6 +75,25 @@ Während des Projektes habe ich mit vielen Frameworks experimentiert, mit dem Zi
 Die Probleme gingen jedoch in den meisten Fällen darauf zurück dass entweder weitere Hardware benötigt wird, oder dass die Nutzung auf Grund der Komplexität der Packages viel zu umständlich ist.
 Das größte Problem lag daran, dass die Packages zu viel Funktionalität mit sich mitbrachten, welche für das Projekt nicht nötig sind und dadurch viel Overhead verursachten.
 
+Folgende Frameworks wurden getestet:
+
+- Orbbec API:
+  - https://orbbec3d.com/develop/
+  - Aufgrund der mangelnden Dokument ist es uns nicht gelungen, die Orbbec-Software auf dem TurtleBot zu installieren.
+
+- joffmann:
+  - https://github.com/joffman/ros_object_recognition
+  - Bei unseren Tests wurden mehrere Objekte mit diesem Framework antrainiert, jedoch war die Erkennungsquote in allen Fällen sehr niedrig.
+
+- Tensorflow:
+  - https://www.tensorflow.org/
+  - Tensorflow konnte nicht genutzt werden, da die Trainingsdatensätze sehr groß sind und aufgrund dessen aus Sicht der gegebenen Rechnerleistung nicht anwendbar ist.
+
+- Darknet Yolo:
+  - https://pjreddie.com/darknet/yolo/
+  - Wäre nutzbar jedoch wird hier eine Cuda konforme Nvidia GPU benötigt, die der TurtleBot jedoch nicht besitzt.
+
+
 Die weitere Nutzung des find_object_2d packages ist unter Anderem aufgrund der Erkennrate nicht zu empfehlen. Es wurden während des Projektes viele Objekte eingespielt, welche jedoch aufgrund ihrer Größe und oder Komplexität nicht erkannt wurden. Aufgrunddessen wurde entschieden während des Projektes das gleiche Objekt mit mehreren Bildern zu verknüpfen. Dies ist jedoch nicht empfehlenswert da man bei find_object_2d mehrere Objekte nicht auf mehrere Objekte abbilden kann. Dies muss man dann als Programmierer entsprechend beachten.
 
 # Potenzielle Verbesserungen
