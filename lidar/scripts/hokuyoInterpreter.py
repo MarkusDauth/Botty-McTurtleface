@@ -142,9 +142,9 @@ def runCallibrate(data):
         if data.ranges[counter]<=callibration:
             if counter not in deathAngles:
                 deathAngles.append(counter)
-            if counter not in deathAngles:
+            if (counter-1) not in deathAngles:
                 deathAngles.append(counter-1)
-            if counter not in deathAngles:
+            if (counter+1) not in deathAngles:
                 deathAngles.append(counter+1)
     rospy.loginfo("Death Angles are...")
     rospy.loginfo(deathAngles)
